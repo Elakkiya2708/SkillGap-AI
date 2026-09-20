@@ -629,6 +629,25 @@ export default function Analyze() {
   </p>
 </div>
 
+<div
+  style={{
+    marginTop: "20px",
+    padding: "20px",
+    border: "1px solid #ddd",
+    borderRadius: "12px"
+  }}
+>
+  <h2>Career Readiness</h2>
+
+  <h1>
+    {result.match_percentage}%
+  </h1>
+
+  <p>
+    Your current skills match {result.match_percentage}% of the
+    required skills for this role.
+  </p>
+</div>
 
           {/* SUMMARY */}
 

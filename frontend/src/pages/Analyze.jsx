@@ -724,12 +724,18 @@ export default function Analyze() {
 
 
                 <p>
-                  Priority:{" "}
-                  <b>
-                    {item.priority}
-                  </b>
-                </p>
-
+  Priority:{" "}
+  <span
+    style={{
+      fontWeight: "bold",
+      padding: "5px 10px",
+      borderRadius: "15px",
+      border: "1px solid #ccc"
+    }}
+  >
+    {item.priority}
+  </span>
+</p>
 
                 <h4>
                   Learning Steps

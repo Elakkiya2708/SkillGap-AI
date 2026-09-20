@@ -6,6 +6,7 @@ from services.skill_gap import calculate_skill_gap
 from services.priority import get_priority
 from services.roadmap import get_roadmap
 from services.resume import extract_text, extract_skills
+from services.job_analyzer import extract_required_skills
 
 
 app = FastAPI()

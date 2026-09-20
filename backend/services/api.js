@@ -1,5 +1,4 @@
 export async function analyzeSkills(userSkills, requiredSkills) {
-
   const response = await fetch("http://127.0.0.1:8000/analyze", {
     method: "POST",
     headers: {
@@ -16,7 +15,6 @@ export async function analyzeSkills(userSkills, requiredSkills) {
 
 
 export async function uploadResume(file) {
-
   const formData = new FormData();
 
   formData.append("file", file);

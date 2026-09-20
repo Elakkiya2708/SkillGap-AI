@@ -719,6 +719,55 @@ export default function Analyze() {
             )
           )}
 
+          <div
+  style={{
+    display: "flex",
+    gap: "20px",
+    marginTop: "20px",
+    flexWrap: "wrap"
+  }}
+>
+  <div
+    style={{
+      flex: 1,
+      minWidth: "200px",
+      padding: "20px",
+      border: "1px solid #ddd",
+      borderRadius: "12px"
+    }}
+  >
+    <h3>Matched Skills</h3>
+
+    <h2>
+      {result.matched.length}
+    </h2>
+
+    <p>
+      Skills you already have
+    </p>
+  </div>
+
+  <div
+    style={{
+      flex: 1,
+      minWidth: "200px",
+      padding: "20px",
+      border: "1px solid #ddd",
+      borderRadius: "12px"
+    }}
+  >
+    <h3>Missing Skills</h3>
+
+    <h2>
+      {result.missing.length}
+    </h2>
+
+    <p>
+      Skills you need to learn
+    </p>
+  </div>
+</div>
+
 
           {/* =========================
               LEARNING ROADMAP

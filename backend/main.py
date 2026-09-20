@@ -73,7 +73,9 @@ async def upload_resume(file: UploadFile = File(...)):
         "skills": skills,
         "text_length": len(text)
     }
-    @app.post("/analyze-job")
+
+
+@app.post("/analyze-job")
 def analyze_job(data: dict):
 
     text = data.get("job_description", "")

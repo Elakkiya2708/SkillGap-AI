@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from services.skill_gap import calculate_skill_gap
 from services.priority import get_priority
 from services.roadmap import get_roadmap
+from services.resume import extract_text, extract_skills
 
 
 app = FastAPI()
@@ -52,3 +53,22 @@ def analyze(data: SkillRequest):
     result["roadmap"] = roadmap
 
     return result
+
+
+@app.post("/upload-resume")
+async def upload_resume(file: UploadFile = File(...)):
+
+    if not file.filename.lower().endswith(".pdf"):
+        return {
+            "error": "Only PDF files are allowed"
+        }
+
+    text = extract_text(file.file)
+
+    skills = extract_skills(text)
+
+    return {
+        "filename": file.filename,
+        "skills": skills,
+        "text_length": len(text)
+    }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
   analyzeSkills,
   uploadResume
@@ -24,7 +25,7 @@ const jobs = {
   ],
 
   "Java Developer": [
-    "Java", "SQL", "Spring", "REST API", "Git", "Docker"
+    "Java", "SQL", "Git", "Docker"
   ],
 
   "Python Developer": [
@@ -44,11 +45,13 @@ const jobs = {
   ],
 
   "Machine Learning Engineer": [
-    "Python", "Machine Learning", "TensorFlow", "PyTorch", "SQL", "Docker"
+    "Python", "Machine Learning", "TensorFlow",
+    "PyTorch", "SQL", "Docker"
   ],
 
   "AI Engineer": [
-    "Python", "Machine Learning", "TensorFlow", "PyTorch", "SQL", "Docker"
+    "Python", "Machine Learning", "TensorFlow",
+    "PyTorch", "SQL", "Docker"
   ],
 
   "Data Engineer": [
@@ -96,7 +99,8 @@ const jobs = {
   ],
 
   "Software Engineer": [
-    "Python", "Java", "JavaScript", "SQL", "Git", "Docker", "AWS"
+    "Python", "Java", "JavaScript", "SQL",
+    "Git", "Docker", "AWS"
   ],
 
   "Mobile App Developer": [
@@ -113,13 +117,25 @@ export default function Analyze() {
   const [job, setJob] =
     useState("Software Developer");
 
-  const [result, setResult] = useState(null);
+  const [result, setResult] =
+    useState(null);
 
-  const [resume, setResume] = useState("");
+  const [resume, setResume] =
+    useState("");
 
   const [detectedSkills, setDetectedSkills] =
     useState([]);
 
+  const [jobDescription, setJobDescription] =
+    useState("");
+
+  const [requiredSkills, setRequiredSkills] =
+    useState([]);
+
+
+  // =========================
+  // RESUME UPLOAD
+  // =========================
 
   const handleResume = async (e) => {
 
@@ -127,14 +143,19 @@ export default function Analyze() {
 
     if (!file) return;
 
+
     const allowed = [
       ".pdf",
       ".docx"
     ];
 
+
     const valid = allowed.some(ext =>
-      file.name.toLowerCase().endsWith(ext)
+      file.name
+        .toLowerCase()
+        .endsWith(ext)
     );
+
 
     if (!valid) {
 
@@ -149,13 +170,19 @@ export default function Analyze() {
 
     try {
 
-      const data = await uploadResume(file);
+      const data =
+        await uploadResume(file);
 
-      setDetectedSkills(data.skills || []);
+
+      setDetectedSkills(
+        data.skills || []
+      );
+
 
       setUserSkills(
         (data.skills || []).join(", ")
       );
+
 
     } catch (error) {
 
@@ -168,12 +195,87 @@ export default function Analyze() {
   };
 
 
+  // =========================
+  // JOB DESCRIPTION ANALYZER
+  // =========================
+
+  const analyzeJobDescription =
+    async () => {
+
+      if (!jobDescription.trim()) {
+
+        alert(
+          "Please enter a job description"
+        );
+
+        return;
+      }
+
+
+      try {
+
+        const response =
+          await fetch(
+            "http://127.0.0.1:8000/analyze-job",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+                job_description:
+                  jobDescription
+              })
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        setRequiredSkills(
+          data.required_skills || []
+        );
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert("Job analysis failed");
+
+      }
+
+    };
+
+
+  // =========================
+  // SKILL GAP ANALYSIS
+  // =========================
+
   const analyze = async () => {
 
-    const user = userSkills
-      .split(",")
-      .map(skill => skill.trim())
-      .filter(Boolean);
+    const user =
+      userSkills
+        .split(",")
+        .map(skill =>
+          skill.trim()
+        )
+        .filter(Boolean);
+
+
+    // If JD skills exist,
+    // use them.
+    // Otherwise use selected job.
+
+    const required =
+      requiredSkills.length > 0
+        ? requiredSkills
+        : jobs[job];
 
 
     if (user.length === 0) {
@@ -186,14 +288,27 @@ export default function Analyze() {
     }
 
 
-    try {
+    if (required.length === 0) {
 
-      const data = await analyzeSkills(
-        user,
-        jobs[job]
+      alert(
+        "Please select a job or analyze a job description"
       );
 
+      return;
+    }
+
+
+    try {
+
+      const data =
+        await analyzeSkills(
+          user,
+          required
+        );
+
+
       setResult(data);
+
 
     } catch (error) {
 
@@ -216,14 +331,28 @@ export default function Analyze() {
       }}
     >
 
-      <h1>SkillGap AI</h1>
+      {/* =========================
+          TITLE
+      ========================= */}
+
+      <h1>
+        SkillGap AI
+      </h1>
+
 
       <p>
         AI-Powered Career Skill Gap Analyzer
       </p>
 
 
-      <h3>Upload Resume</h3>
+      {/* =========================
+          RESUME
+      ========================= */}
+
+      <h3>
+        Upload Resume
+      </h3>
+
 
       <input
         type="file"
@@ -233,11 +362,17 @@ export default function Analyze() {
 
 
       {resume && (
+
         <p>
           📄 {resume}
         </p>
+
       )}
 
+
+      {/* =========================
+          DETECTED SKILLS
+      ========================= */}
 
       {detectedSkills.length > 0 && (
 
@@ -253,11 +388,20 @@ export default function Analyze() {
             <span
               key={skill}
               style={{
-                display: "inline-block",
-                padding: "8px 12px",
-                margin: "5px",
-                border: "1px solid #ccc",
-                borderRadius: "20px"
+                display:
+                  "inline-block",
+
+                padding:
+                  "8px 12px",
+
+                margin:
+                  "5px",
+
+                border:
+                  "1px solid #ccc",
+
+                borderRadius:
+                  "20px"
               }}
             >
               {skill}
@@ -270,14 +414,23 @@ export default function Analyze() {
       )}
 
 
-      <h3>Your Skills</h3>
+      {/* =========================
+          USER SKILLS
+      ========================= */}
+
+      <h3>
+        Your Skills
+      </h3>
+
 
       <input
         type="text"
         placeholder="Python, SQL, Git"
         value={userSkills}
         onChange={(e) =>
-          setUserSkills(e.target.value)
+          setUserSkills(
+            e.target.value
+          )
         }
         style={{
           width: "100%",
@@ -287,7 +440,14 @@ export default function Analyze() {
       />
 
 
-      <h3>Target Job</h3>
+      {/* =========================
+          TARGET JOB
+      ========================= */}
+
+      <h3>
+        Target Job
+      </h3>
+
 
       <select
         value={job}
@@ -300,101 +460,227 @@ export default function Analyze() {
         }}
       >
 
-        {Object.keys(jobs).map(jobName => (
+        {Object.keys(jobs).map(
+          jobName => (
 
-          <option
-            key={jobName}
-            value={jobName}
-          >
-            {jobName}
-          </option>
+            <option
+              key={jobName}
+              value={jobName}
+            >
+              {jobName}
+            </option>
 
-        ))}
+          )
+        )}
 
       </select>
 
 
+      {/* =========================
+          JOB DESCRIPTION
+      ========================= */}
+
+      <h3>
+        Job Description
+      </h3>
+
+
+      <textarea
+        placeholder="Paste the job description here..."
+        value={jobDescription}
+        onChange={(e) =>
+          setJobDescription(
+            e.target.value
+          )
+        }
+        style={{
+          width: "100%",
+          minHeight: "150px",
+          padding: "12px",
+          boxSizing: "border-box"
+        }}
+      />
+
+
       <br />
       <br />
 
 
-      <button onClick={analyze}>
+      <button
+        onClick={
+          analyzeJobDescription
+        }
+      >
+        Extract Required Skills
+      </button>
+
+
+      {/* =========================
+          REQUIRED SKILLS
+      ========================= */}
+
+      {requiredSkills.length > 0 && (
+
+        <div>
+
+          <h3>
+            Required Skills
+          </h3>
+
+
+          {requiredSkills.map(skill => (
+
+            <span
+              key={skill}
+              style={{
+                display:
+                  "inline-block",
+
+                padding:
+                  "8px 12px",
+
+                margin:
+                  "5px",
+
+                border:
+                  "1px solid #ccc",
+
+                borderRadius:
+                  "20px"
+              }}
+            >
+              {skill}
+            </span>
+
+          ))}
+
+        </div>
+
+      )}
+
+
+      <br />
+      <br />
+
+
+      {/* =========================
+          ANALYZE BUTTON
+      ========================= */}
+
+      <button
+        onClick={analyze}
+      >
         Analyze Skill Gap
       </button>
 
+
+      {/* =========================
+          RESULT
+      ========================= */}
 
       {result && (
 
         <div>
 
           <h2>
-            {result.match_percentage}% Match
+            {result.match_percentage}%
+            {" "}
+            Match
           </h2>
 
 
-          <h3>Matched Skills</h3>
+          {/* MATCHED */}
 
-          {result.matched.map(skill => (
-
-            <p key={skill}>
-              ✓ {skill}
-            </p>
-
-          ))}
+          <h3>
+            Matched Skills
+          </h3>
 
 
-          <h3>Missing Skills</h3>
+          {result.matched.map(
+            skill => (
 
-          {result.missing.map(skill => (
-
-            <p key={skill}>
-              ✗ {skill}
-            </p>
-
-          ))}
-
-
-          <h2>Learning Roadmap</h2>
-
-
-          {result.roadmap.map(item => (
-
-            <div
-              key={item.skill}
-              style={{
-                border: "1px solid #ccc",
-                padding: "15px",
-                marginTop: "10px"
-              }}
-            >
-
-              <h3>
-                {item.skill}
-              </h3>
-
-              <p>
-                Priority: <b>
-                  {item.priority}
-                </b>
+              <p key={skill}>
+                ✓ {skill}
               </p>
 
-
-              <h4>
-                Learning Steps
-              </h4>
+            )
+          )}
 
 
-              {item.steps.map(step => (
+          {/* MISSING */}
 
-                <p key={step}>
-                  → {step}
+          <h3>
+            Missing Skills
+          </h3>
+
+
+          {result.missing.map(
+            skill => (
+
+              <p key={skill}>
+                ✗ {skill}
+              </p>
+
+            )
+          )}
+
+
+          {/* ROADMAP */}
+
+          <h2>
+            Learning Roadmap
+          </h2>
+
+
+          {result.roadmap.map(
+            item => (
+
+              <div
+                key={item.skill}
+                style={{
+                  border:
+                    "1px solid #ccc",
+
+                  padding:
+                    "15px",
+
+                  marginTop:
+                    "10px"
+                }}
+              >
+
+                <h3>
+                  {item.skill}
+                </h3>
+
+
+                <p>
+                  Priority:{" "}
+                  <b>
+                    {item.priority}
+                  </b>
                 </p>
 
-              ))}
 
-            </div>
+                <h4>
+                  Learning Steps
+                </h4>
 
-          ))}
+
+                {item.steps.map(
+                  step => (
+
+                    <p key={step}>
+                      → {step}
+                    </p>
+
+                  )
+                )}
+
+              </div>
+
+            )
+          )}
 
         </div>
 

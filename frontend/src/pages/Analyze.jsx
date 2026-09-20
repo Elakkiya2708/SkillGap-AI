@@ -16,8 +16,11 @@ export default function Analyze() {
   };
 
   return (
-    <div>
+    <div style={{ padding: "40px" }}>
+
       <h1>SkillGap AI</h1>
+
+      <p>AI-Powered Career Skill Gap Analyzer</p>
 
       <button onClick={analyze}>
         Analyze My Skills
@@ -25,19 +28,24 @@ export default function Analyze() {
 
       {result && (
         <div>
+
           <h2>{result.match_percentage}% Match</h2>
 
           <h3>Matched Skills</h3>
-          {result.matched.map(skill => (
+
+          {result.matched.map((skill) => (
             <p key={skill}>✓ {skill}</p>
           ))}
 
           <h3>Missing Skills</h3>
-          {result.missing.map(skill => (
+
+          {result.missing.map((skill) => (
             <p key={skill}>✗ {skill}</p>
           ))}
+
         </div>
       )}
+
     </div>
   );
 }

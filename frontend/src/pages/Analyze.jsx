@@ -592,11 +592,42 @@ export default function Analyze() {
 
         <div>
 
-          <h2>
-            {result.match_percentage}%
-            {" "}
-            Match
-          </h2>
+          <div
+  style={{
+    marginTop: "25px",
+    padding: "20px",
+    border: "1px solid #ddd",
+    borderRadius: "12px"
+  }}
+>
+  <h2>
+    Skill Match: {result.match_percentage}%
+  </h2>
+
+  <div
+    style={{
+      width: "100%",
+      height: "20px",
+      background: "#e5e7eb",
+      borderRadius: "10px",
+      overflow: "hidden"
+    }}
+  >
+    <div
+      style={{
+        width: `${result.match_percentage}%`,
+        height: "100%",
+        background: "#2563eb",
+        borderRadius: "10px"
+      }}
+    />
+  </div>
+
+  <p>
+    You match {result.match_percentage}% of the
+    required skills for this role.
+  </p>
+</div>
 
 
           {/* SUMMARY */}

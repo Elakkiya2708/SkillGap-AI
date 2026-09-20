@@ -121,7 +121,8 @@ const jobs = {
 
 export default function Analyze() {
 
-  const [userSkills, setUserSkills] = useState("");
+  const [userSkills, setUserSkills] =
+    useState("");
 
   const [job, setJob] =
     useState("Software Developer");
@@ -143,12 +144,13 @@ export default function Analyze() {
 
 
   // =========================
-  // RESUME UPLOAD
+  // RESUME
   // =========================
 
   const handleResume = async (e) => {
 
-    const file = e.target.files[0];
+    const file =
+      e.target.files[0];
 
     if (!file) return;
 
@@ -159,12 +161,13 @@ export default function Analyze() {
     ];
 
 
-    const valid = allowed.some(
-      ext =>
-        file.name
-          .toLowerCase()
-          .endsWith(ext)
-    );
+    const valid =
+      allowed.some(
+        ext =>
+          file.name
+            .toLowerCase()
+            .endsWith(ext)
+      );
 
 
     if (!valid) {
@@ -192,7 +195,8 @@ export default function Analyze() {
 
 
       setUserSkills(
-        (data.skills || []).join(", ")
+        (data.skills || [])
+          .join(", ")
       );
 
 
@@ -200,7 +204,9 @@ export default function Analyze() {
 
       console.error(error);
 
-      alert("Resume upload failed");
+      alert(
+        "Resume upload failed"
+      );
 
     }
 
@@ -230,6 +236,7 @@ export default function Analyze() {
           await fetch(
             "http://127.0.0.1:8000/analyze-job",
             {
+
               method: "POST",
 
               headers: {
@@ -241,6 +248,7 @@ export default function Analyze() {
                 job_description:
                   jobDescription
               })
+
             }
           );
 
@@ -258,7 +266,9 @@ export default function Analyze() {
 
         console.error(error);
 
-        alert("Job analysis failed");
+        alert(
+          "Job analysis failed"
+        );
 
       }
 
@@ -266,7 +276,7 @@ export default function Analyze() {
 
 
   // =========================
-  // SKILL GAP ANALYSIS
+  // ANALYZE
   // =========================
 
   const analyze = async () => {
@@ -274,8 +284,8 @@ export default function Analyze() {
     const user =
       userSkills
         .split(",")
-        .map(skill =>
-          skill.trim()
+        .map(
+          skill => skill.trim()
         )
         .filter(Boolean);
 
@@ -290,16 +300,6 @@ export default function Analyze() {
 
       alert(
         "Please upload a resume or enter your skills"
-      );
-
-      return;
-    }
-
-
-    if (required.length === 0) {
-
-      alert(
-        "Please select a job or analyze a job description"
       );
 
       return;
@@ -322,7 +322,9 @@ export default function Analyze() {
 
       console.error(error);
 
-      alert("Analysis failed");
+      alert(
+        "Analysis failed"
+      );
 
     }
 
@@ -334,19 +336,16 @@ export default function Analyze() {
     <div
       style={{
         padding: "40px",
-        maxWidth: "800px",
+        maxWidth: "900px",
         margin: "auto",
         fontFamily: "Arial"
       }}
     >
 
-      {/* =========================
-          HEADER
-      ========================= */}
-
       <h1>
         SkillGap AI
       </h1>
+
 
       <p>
         AI-Powered Career Skill Gap Analyzer
@@ -354,12 +353,13 @@ export default function Analyze() {
 
 
       {/* =========================
-          RESUME UPLOAD
+          RESUME
       ========================= */}
 
       <h3>
         Upload Resume
       </h3>
+
 
       <input
         type="file"
@@ -436,10 +436,11 @@ export default function Analyze() {
         type="text"
         placeholder="Python, SQL, Git"
         value={userSkills}
-        onChange={(e) =>
-          setUserSkills(
-            e.target.value
-          )
+        onChange={
+          e =>
+            setUserSkills(
+              e.target.value
+            )
         }
         style={{
           width: "100%",
@@ -450,7 +451,7 @@ export default function Analyze() {
 
 
       {/* =========================
-          TARGET JOB
+          JOB
       ========================= */}
 
       <h3>
@@ -460,8 +461,9 @@ export default function Analyze() {
 
       <select
         value={job}
-        onChange={(e) =>
-          setJob(e.target.value)
+        onChange={
+          e =>
+            setJob(e.target.value)
         }
         style={{
           width: "100%",
@@ -497,10 +499,11 @@ export default function Analyze() {
       <textarea
         placeholder="Paste the job description here..."
         value={jobDescription}
-        onChange={(e) =>
-          setJobDescription(
-            e.target.value
-          )
+        onChange={
+          e =>
+            setJobDescription(
+              e.target.value
+            )
         }
         style={{
           width: "100%",
@@ -574,10 +577,6 @@ export default function Analyze() {
       <br />
 
 
-      {/* =========================
-          ANALYZE
-      ========================= */}
-
       <button
         onClick={analyze}
       >
@@ -600,9 +599,7 @@ export default function Analyze() {
           </h2>
 
 
-          {/* =====================
-              SUMMARY
-          ===================== */}
+          {/* SUMMARY */}
 
           <div
             style={{
@@ -656,22 +653,11 @@ export default function Analyze() {
           </div>
 
 
-          {/* =====================
-              MATCHED SKILLS
-          ===================== */}
+          {/* MATCHED */}
 
           <h3>
             Matched Skills
           </h3>
-
-
-          {result.matched.length === 0 && (
-
-            <p>
-              No matching skills found.
-            </p>
-
-          )}
 
 
           {result.matched.map(
@@ -685,22 +671,11 @@ export default function Analyze() {
           )}
 
 
-          {/* =====================
-              MISSING SKILLS
-          ===================== */}
+          {/* MISSING */}
 
           <h3>
             Missing Skills
           </h3>
-
-
-          {result.missing.length === 0 && (
-
-            <p>
-              No missing skills.
-            </p>
-
-          )}
 
 
           {result.missing.map(
@@ -714,9 +689,9 @@ export default function Analyze() {
           )}
 
 
-          {/* =====================
-              ROADMAP
-          ===================== */}
+          {/* =========================
+              LEARNING ROADMAP
+          ========================= */}
 
           <h2>
             Learning Roadmap
@@ -771,10 +746,177 @@ export default function Analyze() {
                   )
                 )}
 
+
+                {/* DEPENDENCY */}
+
+                {item.dependencies &&
+                  item.dependencies.length > 0 && (
+
+                    <div>
+
+                      <h4>
+                        Skill Dependencies
+                      </h4>
+
+
+                      {item.dependencies.map(
+                        dependency => (
+
+                          <span
+                            key={dependency}
+                            style={{
+                              display:
+                                "inline-block",
+
+                              padding:
+                                "7px 10px",
+
+                              margin:
+                                "4px",
+
+                              background:
+                                "#f1f5f9",
+
+                              borderRadius:
+                                "15px"
+                            }}
+                          >
+                            {dependency}
+                          </span>
+
+                        )
+                      )}
+
+                    </div>
+
+                  )}
+
               </div>
 
             )
           )}
+
+
+          {/* =========================
+              SKILL DEPENDENCY GRAPH
+          ========================= */}
+
+          <h2>
+            Skill Dependency Graph
+          </h2>
+
+
+          <div
+            style={{
+              border:
+                "1px solid #ddd",
+
+              borderRadius:
+                "12px",
+
+              padding:
+                "20px",
+
+              marginTop:
+                "15px"
+            }}
+          >
+
+            {result.roadmap.map(
+              item => (
+
+                <div
+                  key={
+                    "graph-" +
+                    item.skill
+                  }
+                  style={{
+                    marginBottom:
+                      "20px"
+                  }}
+                >
+
+                  <div
+                    style={{
+                      display:
+                        "inline-block",
+
+                      padding:
+                        "10px 16px",
+
+                      border:
+                        "2px solid #333",
+
+                      borderRadius:
+                        "8px",
+
+                      fontWeight:
+                        "bold"
+                    }}
+                  >
+                    {item.skill}
+                  </div>
+
+
+                  {item.dependencies &&
+                    item.dependencies.length > 0 && (
+
+                      <div
+                        style={{
+                          marginTop:
+                            "10px",
+
+                          marginLeft:
+                            "30px"
+                        }}
+                      >
+
+                        <div>
+                          ↓
+                        </div>
+
+
+                        {item.dependencies.map(
+                          dependency => (
+
+                            <div
+                              key={
+                                item.skill +
+                                dependency
+                              }
+                              style={{
+                                display:
+                                  "inline-block",
+
+                                padding:
+                                  "8px 14px",
+
+                                margin:
+                                  "5px",
+
+                                border:
+                                  "1px solid #999",
+
+                                borderRadius:
+                                  "8px"
+                              }}
+                            >
+                              {dependency}
+                            </div>
+
+                          )
+                        )}
+
+                      </div>
+
+                    )}
+
+                </div>
+
+              )
+            )}
+
+          </div>
 
         </div>
 

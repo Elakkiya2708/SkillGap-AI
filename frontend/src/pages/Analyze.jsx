@@ -9,11 +9,13 @@ import {
 const jobs = {
 
   "Software Developer": [
-    "Python", "Java", "JavaScript", "SQL", "Git", "React", "Docker", "AWS"
+    "Python", "Java", "JavaScript", "SQL",
+    "Git", "React", "Docker", "AWS"
   ],
 
   "Full Stack Developer": [
-    "HTML", "CSS", "JavaScript", "React", "Node.js", "SQL", "MongoDB", "Git"
+    "HTML", "CSS", "JavaScript", "React",
+    "Node.js", "SQL", "MongoDB", "Git"
   ],
 
   "Frontend Developer": [
@@ -21,7 +23,8 @@ const jobs = {
   ],
 
   "Backend Developer": [
-    "Python", "FastAPI", "Node.js", "SQL", "REST API", "Docker", "Git"
+    "Python", "FastAPI", "Node.js", "SQL",
+    "REST API", "Docker", "Git"
   ],
 
   "Java Developer": [
@@ -29,29 +32,33 @@ const jobs = {
   ],
 
   "Python Developer": [
-    "Python", "SQL", "FastAPI", "REST API", "Git", "Docker"
+    "Python", "SQL", "FastAPI",
+    "REST API", "Git", "Docker"
   ],
 
   "Web Developer": [
-    "HTML", "CSS", "JavaScript", "React", "Node.js", "Git"
+    "HTML", "CSS", "JavaScript",
+    "React", "Node.js", "Git"
   ],
 
   "Data Analyst": [
-    "Python", "SQL", "Excel", "Power BI", "Statistics"
+    "Python", "SQL", "Excel",
+    "Power BI", "Statistics"
   ],
 
   "Data Scientist": [
-    "Python", "SQL", "Statistics", "Machine Learning", "Data Science"
+    "Python", "SQL", "Statistics",
+    "Machine Learning", "Data Science"
   ],
 
   "Machine Learning Engineer": [
-    "Python", "Machine Learning", "TensorFlow",
-    "PyTorch", "SQL", "Docker"
+    "Python", "Machine Learning",
+    "TensorFlow", "PyTorch", "SQL", "Docker"
   ],
 
   "AI Engineer": [
-    "Python", "Machine Learning", "TensorFlow",
-    "PyTorch", "SQL", "Docker"
+    "Python", "Machine Learning",
+    "TensorFlow", "PyTorch", "SQL", "Docker"
   ],
 
   "Data Engineer": [
@@ -67,7 +74,8 @@ const jobs = {
   ],
 
   "AWS Cloud Developer": [
-    "AWS", "Python", "Java", "Docker", "Git", "SQL"
+    "AWS", "Python", "Java",
+    "Docker", "Git", "SQL"
   ],
 
   "Cybersecurity Analyst": [
@@ -95,12 +103,13 @@ const jobs = {
   ],
 
   "AI/ML Intern": [
-    "Python", "Machine Learning", "SQL", "Statistics"
+    "Python", "Machine Learning",
+    "SQL", "Statistics"
   ],
 
   "Software Engineer": [
-    "Python", "Java", "JavaScript", "SQL",
-    "Git", "Docker", "AWS"
+    "Python", "Java", "JavaScript",
+    "SQL", "Git", "Docker", "AWS"
   ],
 
   "Mobile App Developer": [
@@ -150,16 +159,19 @@ export default function Analyze() {
     ];
 
 
-    const valid = allowed.some(ext =>
-      file.name
-        .toLowerCase()
-        .endsWith(ext)
+    const valid = allowed.some(
+      ext =>
+        file.name
+          .toLowerCase()
+          .endsWith(ext)
     );
 
 
     if (!valid) {
 
-      alert("Please upload PDF or DOCX file");
+      alert(
+        "Please upload PDF or DOCX file"
+      );
 
       return;
     }
@@ -196,7 +208,7 @@ export default function Analyze() {
 
 
   // =========================
-  // JOB DESCRIPTION ANALYZER
+  // JOB DESCRIPTION
   // =========================
 
   const analyzeJobDescription =
@@ -268,10 +280,6 @@ export default function Analyze() {
         .filter(Boolean);
 
 
-    // If JD skills exist,
-    // use them.
-    // Otherwise use selected job.
-
     const required =
       requiredSkills.length > 0
         ? requiredSkills
@@ -327,18 +335,18 @@ export default function Analyze() {
       style={{
         padding: "40px",
         maxWidth: "800px",
-        margin: "auto"
+        margin: "auto",
+        fontFamily: "Arial"
       }}
     >
 
       {/* =========================
-          TITLE
+          HEADER
       ========================= */}
 
       <h1>
         SkillGap AI
       </h1>
-
 
       <p>
         AI-Powered Career Skill Gap Analyzer
@@ -346,13 +354,12 @@ export default function Analyze() {
 
 
       {/* =========================
-          RESUME
+          RESUME UPLOAD
       ========================= */}
 
       <h3>
         Upload Resume
       </h3>
-
 
       <input
         type="file"
@@ -383,31 +390,33 @@ export default function Analyze() {
           </h3>
 
 
-          {detectedSkills.map(skill => (
+          {detectedSkills.map(
+            skill => (
 
-            <span
-              key={skill}
-              style={{
-                display:
-                  "inline-block",
+              <span
+                key={skill}
+                style={{
+                  display:
+                    "inline-block",
 
-                padding:
-                  "8px 12px",
+                  padding:
+                    "8px 12px",
 
-                margin:
-                  "5px",
+                  margin:
+                    "5px",
 
-                border:
-                  "1px solid #ccc",
+                  border:
+                    "1px solid #ccc",
 
-                borderRadius:
-                  "20px"
-              }}
-            >
-              {skill}
-            </span>
+                  borderRadius:
+                    "20px"
+                }}
+              >
+                {skill}
+              </span>
 
-          ))}
+            )
+          )}
 
         </div>
 
@@ -528,31 +537,33 @@ export default function Analyze() {
           </h3>
 
 
-          {requiredSkills.map(skill => (
+          {requiredSkills.map(
+            skill => (
 
-            <span
-              key={skill}
-              style={{
-                display:
-                  "inline-block",
+              <span
+                key={skill}
+                style={{
+                  display:
+                    "inline-block",
 
-                padding:
-                  "8px 12px",
+                  padding:
+                    "8px 12px",
 
-                margin:
-                  "5px",
+                  margin:
+                    "5px",
 
-                border:
-                  "1px solid #ccc",
+                  border:
+                    "1px solid #ccc",
 
-                borderRadius:
-                  "20px"
-              }}
-            >
-              {skill}
-            </span>
+                  borderRadius:
+                    "20px"
+                }}
+              >
+                {skill}
+              </span>
 
-          ))}
+            )
+          )}
 
         </div>
 
@@ -564,7 +575,7 @@ export default function Analyze() {
 
 
       {/* =========================
-          ANALYZE BUTTON
+          ANALYZE
       ========================= */}
 
       <button
@@ -589,11 +600,78 @@ export default function Analyze() {
           </h2>
 
 
-          {/* MATCHED */}
+          {/* =====================
+              SUMMARY
+          ===================== */}
+
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "20px",
+              border:
+                "1px solid #ddd",
+              borderRadius: "12px"
+            }}
+          >
+
+            <h3>
+              Skill Gap Summary
+            </h3>
+
+
+            <p>
+              <b>
+                Total Required Skills:
+              </b>{" "}
+              {
+                result.matched.length +
+                result.missing.length
+              }
+            </p>
+
+
+            <p>
+              <b>
+                Skills You Have:
+              </b>{" "}
+              {result.matched.length}
+            </p>
+
+
+            <p>
+              <b>
+                Skills to Learn:
+              </b>{" "}
+              {result.missing.length}
+            </p>
+
+
+            <p>
+              <b>
+                Match Percentage:
+              </b>{" "}
+              {result.match_percentage}%
+            </p>
+
+          </div>
+
+
+          {/* =====================
+              MATCHED SKILLS
+          ===================== */}
 
           <h3>
             Matched Skills
           </h3>
+
+
+          {result.matched.length === 0 && (
+
+            <p>
+              No matching skills found.
+            </p>
+
+          )}
 
 
           {result.matched.map(
@@ -607,11 +685,22 @@ export default function Analyze() {
           )}
 
 
-          {/* MISSING */}
+          {/* =====================
+              MISSING SKILLS
+          ===================== */}
 
           <h3>
             Missing Skills
           </h3>
+
+
+          {result.missing.length === 0 && (
+
+            <p>
+              No missing skills.
+            </p>
+
+          )}
 
 
           {result.missing.map(
@@ -625,7 +714,9 @@ export default function Analyze() {
           )}
 
 
-          {/* ROADMAP */}
+          {/* =====================
+              ROADMAP
+          ===================== */}
 
           <h2>
             Learning Roadmap
@@ -645,6 +736,9 @@ export default function Analyze() {
                     "15px",
 
                   marginTop:
+                    "10px",
+
+                  borderRadius:
                     "10px"
                 }}
               >

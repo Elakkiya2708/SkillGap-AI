@@ -59,12 +59,22 @@ def analyze(data: SkillRequest):
 @app.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
 
-    if not file.filename.lower().endswith(".pdf"):
+    allowed = [
+        ".pdf",
+        ".docx"
+    ]
+
+    filename = file.filename.lower()
+
+    if not any(filename.endswith(ext) for ext in allowed):
         return {
-            "error": "Only PDF files are allowed"
+            "error": "Only PDF and DOCX files are allowed"
         }
 
-    text = extract_text(file.file)
+    text = extract_text(
+        file.file,
+        file.filename
+    )
 
     skills = extract_skills(text)
 

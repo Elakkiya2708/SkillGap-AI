@@ -1,5 +1,6 @@
-import fitz
+from pypdf import PdfReader
 from docx import Document
+import re
 
 
 SKILLS = [
@@ -32,33 +33,18 @@ def extract_text(file, filename):
 
     filename = filename.lower()
 
-    # =========================
-    # PDF
-    # =========================
-
     if filename.endswith(".pdf"):
 
-        pdf = fitz.open(
-            stream=file.read(),
-            filetype="pdf"
-        )
+        reader = PdfReader(file)
 
         text = ""
 
-        for page in pdf:
-
-            text += page.get_text(
-                "text"
-            ) + "\n"
-
-        pdf.close()
+        for page in reader.pages:
+            text += page.extract_text() or ""
+            text += "\n"
 
         return text
 
-
-    # =========================
-    # DOCX
-    # =========================
 
     if filename.endswith(".docx"):
 
@@ -67,7 +53,6 @@ def extract_text(file, filename):
         text = ""
 
         for paragraph in document.paragraphs:
-
             text += paragraph.text + "\n"
 
         return text
@@ -85,7 +70,14 @@ def extract_skills(text):
 
     for skill in SKILLS:
 
-        if skill.lower() in text_lower:
+        pattern = r"\b" + re.escape(
+            skill.lower()
+        ) + r"\b"
+
+        if re.search(
+            pattern,
+            text_lower
+        ):
 
             found.append(skill)
 

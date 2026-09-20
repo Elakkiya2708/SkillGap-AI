@@ -807,6 +807,31 @@ export default function Analyze() {
   </div>
 </div>
 
+<div
+  style={{
+    marginTop: "20px",
+    padding: "20px",
+    border: "1px solid #ddd",
+    borderRadius: "12px"
+  }}
+>
+  <h2>Recommended Skills for {job}</h2>
+
+  {result.missing.slice(0, 3).map(skill => (
+    <div
+      key={skill}
+      style={{
+        padding: "10px 0",
+        borderBottom: "1px solid #eee"
+      }}
+    >
+      <strong>{skill}</strong>
+      <p style={{ margin: "5px 0" }}>
+        Learn this skill to improve your readiness for this role.
+      </p>
+    </div>
+  ))}
+</div>
 
           {/* =========================
               LEARNING ROADMAP

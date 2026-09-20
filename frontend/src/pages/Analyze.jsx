@@ -1,10 +1,46 @@
 import { useState } from "react";
 import { analyzeSkills } from "../services/api";
 
+const jobs = {
+  "Software Developer": [
+    "Python",
+    "Java",
+    "SQL",
+    "Git",
+    "React",
+    "Docker",
+    "AWS"
+  ],
+
+  "Data Analyst": [
+    "Python",
+    "SQL",
+    "Excel",
+    "Power BI",
+    "Statistics"
+  ],
+
+  "Frontend Developer": [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "React",
+    "Git"
+  ],
+
+  "Backend Developer": [
+    "Python",
+    "FastAPI",
+    "SQL",
+    "REST API",
+    "Docker"
+  ]
+};
+
 export default function Analyze() {
 
   const [userSkills, setUserSkills] = useState("");
-  const [requiredSkills, setRequiredSkills] = useState("");
+  const [job, setJob] = useState("Software Developer");
   const [result, setResult] = useState(null);
 
   const analyze = async () => {
@@ -14,10 +50,7 @@ export default function Analyze() {
       .map(skill => skill.trim())
       .filter(Boolean);
 
-    const required = requiredSkills
-      .split(",")
-      .map(skill => skill.trim())
-      .filter(Boolean);
+    const required = jobs[job];
 
     const data = await analyzeSkills(user, required);
 
@@ -29,7 +62,7 @@ export default function Analyze() {
 
       <h1>SkillGap AI</h1>
 
-      <p>Find the skills you need for your target career.</p>
+      <p>AI-Powered Career Skill Gap Analyzer</p>
 
       <h3>Your Skills</h3>
 
@@ -41,15 +74,21 @@ export default function Analyze() {
         style={{ width: "100%", padding: "12px" }}
       />
 
-      <h3>Required Job Skills</h3>
+      <h3>Target Job</h3>
 
-      <input
-        type="text"
-        placeholder="Python, SQL, React, Docker, AWS"
-        value={requiredSkills}
-        onChange={(e) => setRequiredSkills(e.target.value)}
+      <select
+        value={job}
+        onChange={(e) => setJob(e.target.value)}
         style={{ width: "100%", padding: "12px" }}
-      />
+      >
+
+        {Object.keys(jobs).map(jobName => (
+          <option key={jobName}>
+            {jobName}
+          </option>
+        ))}
+
+      </select>
 
       <br />
       <br />
@@ -59,6 +98,7 @@ export default function Analyze() {
       </button>
 
       {result && (
+
         <div>
 
           <h2>{result.match_percentage}% Match</h2>
@@ -76,6 +116,7 @@ export default function Analyze() {
           ))}
 
         </div>
+
       )}
 
     </div>

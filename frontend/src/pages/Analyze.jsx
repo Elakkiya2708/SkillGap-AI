@@ -37,6 +37,7 @@ const jobs = {
   ]
 };
 
+
 export default function Analyze() {
 
   const [userSkills, setUserSkills] = useState("");
@@ -50,19 +51,28 @@ export default function Analyze() {
       .map(skill => skill.trim())
       .filter(Boolean);
 
-    const required = jobs[job];
-
-    const data = await analyzeSkills(user, required);
+    const data = await analyzeSkills(
+      user,
+      jobs[job]
+    );
 
     setResult(data);
   };
 
+
   return (
-    <div style={{ padding: "40px", maxWidth: "700px", margin: "auto" }}>
+    <div style={{
+      padding: "40px",
+      maxWidth: "800px",
+      margin: "auto"
+    }}>
 
       <h1>SkillGap AI</h1>
 
-      <p>AI-Powered Career Skill Gap Analyzer</p>
+      <p>
+        AI-Powered Career Skill Gap Analyzer
+      </p>
+
 
       <h3>Your Skills</h3>
 
@@ -70,16 +80,27 @@ export default function Analyze() {
         type="text"
         placeholder="Python, SQL, Git"
         value={userSkills}
-        onChange={(e) => setUserSkills(e.target.value)}
-        style={{ width: "100%", padding: "12px" }}
+        onChange={(e) =>
+          setUserSkills(e.target.value)
+        }
+        style={{
+          width: "100%",
+          padding: "12px"
+        }}
       />
+
 
       <h3>Target Job</h3>
 
       <select
         value={job}
-        onChange={(e) => setJob(e.target.value)}
-        style={{ width: "100%", padding: "12px" }}
+        onChange={(e) =>
+          setJob(e.target.value)
+        }
+        style={{
+          width: "100%",
+          padding: "12px"
+        }}
       >
 
         {Object.keys(jobs).map(jobName => (
@@ -90,29 +111,74 @@ export default function Analyze() {
 
       </select>
 
+
       <br />
       <br />
+
 
       <button onClick={analyze}>
         Analyze Skill Gap
       </button>
 
+
       {result && (
 
         <div>
 
-          <h2>{result.match_percentage}% Match</h2>
+          <h2>
+            {result.match_percentage}% Match
+          </h2>
+
 
           <h3>Matched Skills</h3>
 
           {result.matched.map(skill => (
-            <p key={skill}>✓ {skill}</p>
+            <p key={skill}>
+              ✓ {skill}
+            </p>
           ))}
+
 
           <h3>Missing Skills</h3>
 
           {result.missing.map(skill => (
-            <p key={skill}>✗ {skill}</p>
+            <p key={skill}>
+              ✗ {skill}
+            </p>
+          ))}
+
+
+          <h2>Learning Roadmap</h2>
+
+
+          {result.roadmap.map(item => (
+
+            <div
+              key={item.skill}
+              style={{
+                border: "1px solid #ccc",
+                padding: "15px",
+                marginTop: "10px"
+              }}
+            >
+
+              <h3>{item.skill}</h3>
+
+              <p>
+                Priority: <b>{item.priority}</b>
+              </p>
+
+
+              <h4>Learning Steps</h4>
+
+              {item.steps.map(step => (
+                <p key={step}>
+                  → {step}
+                </p>
+              ))}
+
+            </div>
+
           ))}
 
         </div>

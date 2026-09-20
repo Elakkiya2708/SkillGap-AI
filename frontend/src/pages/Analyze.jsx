@@ -817,6 +817,17 @@ export default function Analyze() {
   </span>
 </p>
 
+<p>
+  {item.priority === "Critical" &&
+    "🔥 Learn this skill first"}
+  {item.priority === "High" &&
+    "⚡ Important skill for this role"}
+  {item.priority === "Medium" &&
+    "📌 Recommended to improve your profile"}
+  {item.priority === "Low" &&
+    "💡 Useful additional skill"}
+</p>
+
                 <h4>
                   Learning Steps
                 </h4>

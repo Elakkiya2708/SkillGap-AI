@@ -65,9 +65,18 @@ export default function Analyze() {
 
     if (!file) return;
 
-    if (!file.name.toLowerCase().endsWith(".pdf")) {
+    const allowed = [
+      ".pdf",
+      ".docx"
+    ];
 
-      alert("Please upload a PDF file");
+    const valid = allowed.some(ext =>
+      file.name.toLowerCase().endsWith(ext)
+    );
+
+    if (!valid) {
+
+      alert("Please upload PDF or DOCX file");
 
       return;
     }
@@ -107,7 +116,9 @@ export default function Analyze() {
 
     if (user.length === 0) {
 
-      alert("Please upload a resume or enter your skills");
+      alert(
+        "Please upload a resume or enter your skills"
+      );
 
       return;
     }
@@ -150,27 +161,21 @@ export default function Analyze() {
       </p>
 
 
-      {/* RESUME UPLOAD */}
-
       <h3>Upload Resume</h3>
 
       <input
         type="file"
-        accept=".pdf"
+        accept=".pdf,.docx"
         onChange={handleResume}
       />
 
 
       {resume && (
-
         <p>
           📄 {resume}
         </p>
-
       )}
 
-
-      {/* DETECTED SKILLS */}
 
       {detectedSkills.length > 0 && (
 
@@ -203,8 +208,6 @@ export default function Analyze() {
       )}
 
 
-      {/* MANUAL SKILLS */}
-
       <h3>Your Skills</h3>
 
       <input
@@ -221,8 +224,6 @@ export default function Analyze() {
         }}
       />
 
-
-      {/* TARGET JOB */}
 
       <h3>Target Job</h3>
 
@@ -255,20 +256,10 @@ export default function Analyze() {
       <br />
 
 
-      {/* ANALYZE BUTTON */}
-
-      <button
-        onClick={analyze}
-        style={{
-          padding: "12px 20px",
-          cursor: "pointer"
-        }}
-      >
+      <button onClick={analyze}>
         Analyze Skill Gap
       </button>
 
-
-      {/* RESULTS */}
 
       {result && (
 
@@ -279,63 +270,29 @@ export default function Analyze() {
           </h2>
 
 
-          {/* MATCHED */}
+          <h3>Matched Skills</h3>
 
-          <h3>
-            Matched Skills
-          </h3>
+          {result.matched.map(skill => (
 
-
-          {result.matched.length > 0 ? (
-
-            result.matched.map(skill => (
-
-              <p key={skill}>
-                ✓ {skill}
-              </p>
-
-            ))
-
-          ) : (
-
-            <p>
-              No matched skills
+            <p key={skill}>
+              ✓ {skill}
             </p>
 
-          )}
+          ))}
 
 
-          {/* MISSING */}
+          <h3>Missing Skills</h3>
 
-          <h3>
-            Missing Skills
-          </h3>
+          {result.missing.map(skill => (
 
-
-          {result.missing.length > 0 ? (
-
-            result.missing.map(skill => (
-
-              <p key={skill}>
-                ✗ {skill}
-              </p>
-
-            ))
-
-          ) : (
-
-            <p>
-              No missing skills 🎉
+            <p key={skill}>
+              ✗ {skill}
             </p>
 
-          )}
+          ))}
 
 
-          {/* ROADMAP */}
-
-          <h2>
-            Learning Roadmap
-          </h2>
+          <h2>Learning Roadmap</h2>
 
 
           {result.roadmap.map(item => (
@@ -353,10 +310,8 @@ export default function Analyze() {
                 {item.skill}
               </h3>
 
-
               <p>
-                Priority:{" "}
-                <b>
+                Priority: <b>
                   {item.priority}
                 </b>
               </p>

@@ -3,8 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from services.skill_gap import calculate_skill_gap
+from services.priority import get_priority
+from services.roadmap import get_roadmap
+
 
 app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,7 +26,9 @@ class SkillRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return {"message": "SkillGap AI API is running"}
+    return {
+        "message": "SkillGap AI API is running"
+    }
 
 
 @app.post("/analyze")
@@ -32,5 +38,17 @@ def analyze(data: SkillRequest):
         data.user_skills,
         data.required_skills
     )
+
+    roadmap = []
+
+    for skill in result["missing"]:
+
+        roadmap.append({
+            "skill": skill,
+            "priority": get_priority(skill),
+            "steps": get_roadmap(skill)
+        })
+
+    result["roadmap"] = roadmap
 
     return result

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { analyzeSkills } from "../services/api";
+import { analyzeSkills, uploadResume } from "../services/api";
 
 const jobs = {
   "Software Developer": [

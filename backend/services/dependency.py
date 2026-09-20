@@ -1,45 +1,62 @@
 dependencies = {
 
     "python": [
-        "machine learning",
-        "data science",
-        "fastapi"
+        "Machine Learning",
+        "Data Science",
+        "FastAPI"
     ],
 
     "javascript": [
-        "react",
-        "node.js"
+        "React",
+        "Node.js"
     ],
 
     "sql": [
-        "data science",
-        "data analyst",
-        "data engineer"
+        "Data Science",
+        "Data Analyst",
+        "Data Engineer"
     ],
 
     "machine learning": [
-        "tensorflow",
-        "pytorch",
-        "ai engineer"
+        "TensorFlow",
+        "PyTorch",
+        "AI Engineer"
     ],
 
     "react": [
-        "frontend developer",
-        "full stack developer"
+        "Frontend Developer",
+        "Full Stack Developer"
     ],
 
     "docker": [
-        "devops engineer",
-        "cloud engineer"
+        "DevOps Engineer",
+        "Cloud Engineer"
     ],
 
     "aws": [
-        "cloud engineer",
-        "devops engineer"
+        "Cloud Engineer",
+        "DevOps Engineer"
     ],
 
     "fastapi": [
-        "backend developer"
+        "Backend Developer"
+    ],
+
+    "java": [
+        "Spring",
+        "Backend Developer"
+    ],
+
+    "html": [
+        "CSS",
+        "JavaScript",
+        "Frontend Developer"
+    ],
+
+    "css": [
+        "JavaScript",
+        "React",
+        "Frontend Developer"
     ]
 
 }

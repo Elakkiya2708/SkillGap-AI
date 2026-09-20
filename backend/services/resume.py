@@ -1,4 +1,5 @@
 from pypdf import PdfReader
+from docx import Document
 import re
 
 
@@ -19,23 +20,47 @@ SKILLS = [
     "AWS",
     "Excel",
     "Power BI",
+    "Statistics",
     "Machine Learning",
     "Data Science",
     "TensorFlow",
-    "PyTorch"
+    "PyTorch",
+    "REST API"
 ]
 
 
-def extract_text(file):
+def extract_text(file, filename):
 
-    reader = PdfReader(file)
+    if filename.lower().endswith(".pdf"):
 
-    text = ""
+        reader = PdfReader(file)
 
-    for page in reader.pages:
-        text += page.extract_text() or ""
+        text = ""
 
-    return text
+        for page in reader.pages:
+            text += page.extract_text() or ""
+
+        return text
+
+
+    if filename.lower().endswith(".docx"):
+
+        document = Document(file)
+
+        text = ""
+
+        for paragraph in document.paragraphs:
+            text += paragraph.text + "\n"
+
+        return text
+
+
+    if filename.lower().endswith(".doc"):
+
+        return ""
+
+
+    return ""
 
 
 def extract_skills(text):

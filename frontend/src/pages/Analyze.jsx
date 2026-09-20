@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { analyzeSkills, uploadResume } from "../services/api";
+const [resume, setResume] = useState(null);
+const [detectedSkills, setDetectedSkills] = useState([]);
 
 const jobs = {
   "Software Developer": [

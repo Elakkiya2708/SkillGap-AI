@@ -8,37 +8,99 @@ import {
 const jobs = {
 
   "Software Developer": [
-    "Python",
-    "Java",
-    "SQL",
-    "Git",
-    "React",
-    "Docker",
-    "AWS"
+    "Python", "Java", "JavaScript", "SQL", "Git", "React", "Docker", "AWS"
   ],
 
-  "Data Analyst": [
-    "Python",
-    "SQL",
-    "Excel",
-    "Power BI",
-    "Statistics"
+  "Full Stack Developer": [
+    "HTML", "CSS", "JavaScript", "React", "Node.js", "SQL", "MongoDB", "Git"
   ],
 
   "Frontend Developer": [
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "React",
-    "Git"
+    "HTML", "CSS", "JavaScript", "React", "Git"
   ],
 
   "Backend Developer": [
-    "Python",
-    "FastAPI",
-    "SQL",
-    "REST API",
-    "Docker"
+    "Python", "FastAPI", "Node.js", "SQL", "REST API", "Docker", "Git"
+  ],
+
+  "Java Developer": [
+    "Java", "SQL", "Spring", "REST API", "Git", "Docker"
+  ],
+
+  "Python Developer": [
+    "Python", "SQL", "FastAPI", "REST API", "Git", "Docker"
+  ],
+
+  "Web Developer": [
+    "HTML", "CSS", "JavaScript", "React", "Node.js", "Git"
+  ],
+
+  "Data Analyst": [
+    "Python", "SQL", "Excel", "Power BI", "Statistics"
+  ],
+
+  "Data Scientist": [
+    "Python", "SQL", "Statistics", "Machine Learning", "Data Science"
+  ],
+
+  "Machine Learning Engineer": [
+    "Python", "Machine Learning", "TensorFlow", "PyTorch", "SQL", "Docker"
+  ],
+
+  "AI Engineer": [
+    "Python", "Machine Learning", "TensorFlow", "PyTorch", "SQL", "Docker"
+  ],
+
+  "Data Engineer": [
+    "Python", "SQL", "Docker", "AWS", "Git"
+  ],
+
+  "Cloud Engineer": [
+    "AWS", "Docker", "Linux", "Python", "Git"
+  ],
+
+  "DevOps Engineer": [
+    "Docker", "AWS", "Git", "Python", "Linux"
+  ],
+
+  "AWS Cloud Developer": [
+    "AWS", "Python", "Java", "Docker", "Git", "SQL"
+  ],
+
+  "Cybersecurity Analyst": [
+    "Python", "Linux", "SQL", "Git", "AWS"
+  ],
+
+  "QA Engineer": [
+    "Python", "Java", "SQL", "Git", "REST API"
+  ],
+
+  "Software Tester": [
+    "Java", "Python", "SQL", "Git", "REST API"
+  ],
+
+  "Database Developer": [
+    "SQL", "Python", "MongoDB", "Git"
+  ],
+
+  "Business Analyst": [
+    "Excel", "SQL", "Power BI", "Statistics"
+  ],
+
+  "Power BI Developer": [
+    "Power BI", "Excel", "SQL", "Statistics"
+  ],
+
+  "AI/ML Intern": [
+    "Python", "Machine Learning", "SQL", "Statistics"
+  ],
+
+  "Software Engineer": [
+    "Python", "Java", "JavaScript", "SQL", "Git", "Docker", "AWS"
+  ],
+
+  "Mobile App Developer": [
+    "Java", "JavaScript", "Git", "SQL"
   ]
 
 };

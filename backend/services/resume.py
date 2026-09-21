@@ -218,8 +218,7 @@ def extract_skills(text):
         return found
 
 
-    text_lower =
-        text.lower()
+    text_lower =text.lower()
 
 
     # Normalize spaces

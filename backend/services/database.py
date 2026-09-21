@@ -93,3 +93,37 @@ def get_history():
         })
 
     return history
+
+
+def delete_analysis(analysis_id):
+
+    conn = sqlite3.connect(DB)
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM analysis_history WHERE id = ?",
+        (analysis_id,)
+    )
+
+    conn.commit()
+
+    deleted = cursor.rowcount > 0
+
+    conn.close()
+
+    return deleted
+
+
+def clear_history():
+
+    conn = sqlite3.connect(DB)
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM analysis_history"
+    )
+
+    conn.commit()
+    conn.close()

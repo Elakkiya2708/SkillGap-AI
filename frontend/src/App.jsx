@@ -1,7 +1,26 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Analyze from "./pages/Analyze";
 import History from "./pages/History";
+
 function App() {
-  return <Analyze />;
+  return (
+    <BrowserRouter>
+      <Routes>
+
+        <Route
+          path="/"
+          element={<Analyze />}
+        />
+
+        <Route
+          path="/history"
+          element={<History />}
+        />
+
+      </Routes>
+    </BrowserRouter>
+  );
 }
-<Route path="/history" element={<History />} />
+
 export default App;

@@ -973,6 +973,57 @@ export default function Analyze() {
           <h2>
             Learning Roadmap
           </h2>
+          <div
+  style={{
+    marginTop: "20px",
+    padding: "20px",
+    border: "1px solid #ddd",
+    borderRadius: "12px"
+  }}
+>
+  <h2>Learning Progress</h2>
+
+  <h1>
+    {result.roadmap.length > 0
+      ? Math.round(
+          (completedSkills.length /
+            result.roadmap.length) *
+            100
+        )
+      : 0}%
+  </h1>
+
+  <p>
+    {completedSkills.length} of{" "}
+    {result.roadmap.length} skills completed
+  </p>
+
+  <div
+    style={{
+      width: "100%",
+      height: "14px",
+      background: "#e5e7eb",
+      borderRadius: "10px",
+      overflow: "hidden"
+    }}
+  >
+    <div
+      style={{
+        width: `${
+          result.roadmap.length > 0
+            ? (completedSkills.length /
+                result.roadmap.length) *
+              100
+            : 0
+        }%`,
+        height: "100%",
+        background: "#2563eb",
+        borderRadius: "10px"
+      }}
+    />
+  </div>
+</div>
+
 
 
           {result.roadmap.map(

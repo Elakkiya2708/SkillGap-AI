@@ -5,7 +5,7 @@ import {
   uploadResume
 } from "../services/api";
 
-
+const [completedSkills, setCompletedSkills] = useState([]);
 const jobs = {
 
   "Software Developer": [

@@ -42,6 +42,75 @@ def home():
         "message": "SkillGap AI API is running"
     }
 
+@app.post("/download-report")
+def download_report(data: dict):
+
+    buffer = io.BytesIO()
+
+    pdf = canvas.Canvas(buffer)
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(50, 800, "SkillGap AI - Career Skill Gap Report")
+
+    pdf.setFont("Helvetica", 12)
+
+    y = 760
+
+    pdf.drawString(
+        50, y,
+        "Target Job: " + data.get("job", "N/A")
+    )
+
+    y -= 30
+
+    pdf.drawString(
+        50, y,
+        "Skill Match: " +
+        str(data.get("match_percentage", 0)) + "%"
+    )
+
+    y -= 40
+
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(50, y, "Matched Skills")
+
+    y -= 25
+
+    pdf.setFont("Helvetica", 11)
+
+    for skill in data.get("matched", []):
+
+        pdf.drawString(60, y, "✓ " + skill)
+
+        y -= 20
+
+    y -= 20
+
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(50, y, "Missing Skills")
+
+    y -= 25
+
+    pdf.setFont("Helvetica", 11)
+
+    for skill in data.get("missing", []):
+
+        pdf.drawString(60, y, "✗ " + skill)
+
+        y -= 20
+
+    pdf.save()
+
+    buffer.seek(0)
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition":
+            "attachment; filename=SkillGap_Report.pdf"
+        }
+    )
 
 @app.post("/analyze")
 def analyze(data: SkillRequest):

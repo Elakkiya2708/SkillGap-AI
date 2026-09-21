@@ -81,8 +81,7 @@ def extract_text(
 
     if filename.endswith(".pdf"):
 
-        pdf_bytes =
-            file.read()
+        pdf_bytes = file.read()
 
 
         text = ""

@@ -783,6 +783,7 @@ export default function Analyze() {
 
             )
           )}
+          const [searchSkill, setSearchSkill] = useState("");
 
 
           {/* MISSING */}

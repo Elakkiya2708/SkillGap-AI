@@ -1,106 +1,69 @@
 import { useEffect, useState } from "react";
 
-
 export default function History() {
 
-  const [history, setHistory] =
-    useState([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] =
-    useState("");
-
-
-  // =========================
-  // LOAD HISTORY
-  // =========================
-
-  const loadHistory = async () => {
-  setLoading(true);
-  setError("");
-
-  try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/history"
-    );
-
-    if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    console.log("History data:", data);
-
-    setHistory(Array.isArray(data) ? data : []);
-
-  } catch (err) {
-    console.error("History error:", err);
-    setError("Unable to load history. Make sure backend is running.");
-    setHistory([]);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // =========================
-  // LOAD ON PAGE OPEN
-  // =========================
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
 
-    loadHistory();
+    fetch("http://127.0.0.1:8000/history")
+      .then(response => {
+
+        if (!response.ok) {
+          throw new Error("Server error");
+        }
+
+        return response.json();
+      })
+
+      .then(data => {
+
+        console.log("History:", data);
+
+        setHistory(
+          Array.isArray(data) ? data : []
+        );
+
+        setLoading(false);
+      })
+
+      .catch(err => {
+
+        console.error("History error:", err);
+
+        setError(
+          "Unable to load history. Please check backend."
+        );
+
+        setLoading(false);
+      });
 
   }, []);
 
-
-  // =========================
-  // DELETE ONE
-  // =========================
-
-  const deleteItem = async (id) => {
+  const deleteHistory = async (id) => {
 
     try {
 
-      const response =
-        await fetch(
-          `http://127.0.0.1:8000/history/${id}`,
-          {
-            method: "DELETE"
-          }
-        );
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          "Delete failed"
-        );
-
-      }
-
-
-      await loadHistory();
-
-
-    } catch (err) {
-
-      console.error(err);
-
-      alert(
-        "Failed to delete history"
+      await fetch(
+        `http://127.0.0.1:8000/history/${id}`,
+        {
+          method: "DELETE"
+        }
       );
 
-    }
+      setHistory(
+        history.filter(item => item.id !== id)
+      );
 
+    } catch (error) {
+
+      alert("Delete failed");
+
+    }
   };
 
-
-  // =========================
-  // CLEAR ALL
-  // =========================
 
   const clearHistory = async () => {
 
@@ -109,46 +72,86 @@ export default function History() {
         "Delete all analysis history?"
       )
     ) {
-
       return;
-
     }
-
 
     try {
 
-      const response =
-        await fetch(
-          "http://127.0.0.1:8000/history",
-          {
-            method: "DELETE"
-          }
-        );
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          "Clear history failed"
-        );
-
-      }
-
+      await fetch(
+        "http://127.0.0.1:8000/history",
+        {
+          method: "DELETE"
+        }
+      );
 
       setHistory([]);
 
+    } catch (error) {
 
-    } catch (err) {
-
-      console.error(err);
-
-      alert(
-        "Failed to clear history"
-      );
+      alert("Clear history failed");
 
     }
-
   };
+
+
+  if (loading) {
+
+    return (
+      <div
+        style={{
+          maxWidth: "900px",
+          margin: "auto",
+          padding: "50px",
+          textAlign: "center"
+        }}
+      >
+
+        <h1>Analysis History</h1>
+
+        <p>
+          View your previous skill gap analyses
+        </p>
+
+        <h3>
+          Loading history...
+        </h3>
+
+      </div>
+    );
+  }
+
+
+  if (error) {
+
+    return (
+      <div
+        style={{
+          maxWidth: "900px",
+          margin: "auto",
+          padding: "50px",
+          textAlign: "center"
+        }}
+      >
+
+        <h1>Analysis History</h1>
+
+        <p style={{ color: "red" }}>
+          {error}
+        </p>
+
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            padding: "10px 20px",
+            cursor: "pointer"
+          }}
+        >
+          Retry
+        </button>
+
+      </div>
+    );
+  }
 
 
   return (
@@ -157,9 +160,7 @@ export default function History() {
       style={{
         maxWidth: "900px",
         margin: "auto",
-        padding: "40px",
-        fontFamily:
-          "Arial, sans-serif"
+        padding: "40px"
       }}
     >
 
@@ -167,272 +168,147 @@ export default function History() {
         Analysis History
       </h1>
 
-
       <p>
         View your previous skill gap analyses
       </p>
 
 
-      {/* LOADING */}
-
-      {loading && (
+      {history.length === 0 ? (
 
         <div
           style={{
+            marginTop: "30px",
             padding: "30px",
+            border: "1px solid #ddd",
+            borderRadius: "12px",
             textAlign: "center"
           }}
         >
 
-          <h3>
-            Loading history...
-          </h3>
-
-        </div>
-
-      )}
-
-
-      {/* ERROR */}
-
-      {!loading && error && (
-
-        <div
-          style={{
-            padding: "20px",
-            border:
-              "1px solid #ef4444",
-            borderRadius: "10px"
-          }}
-        >
+          <h2>
+            No Analysis History
+          </h2>
 
           <p>
-            {error}
+            Complete a skill gap analysis
+            to see it here.
           </p>
-
-
-          <button
-            onClick={loadHistory}
-            style={{
-              padding:
-                "10px 16px",
-              cursor:
-                "pointer"
-            }}
-          >
-            Retry
-          </button>
 
         </div>
 
-      )}
+      ) : (
 
+        <>
 
-      {/* EMPTY */}
-
-      {!loading &&
-        !error &&
-        history.length === 0 && (
-
-          <div
+          <button
+            onClick={clearHistory}
             style={{
-              padding: "30px",
-              border:
-                "1px solid #ddd",
-              borderRadius: "12px",
-              textAlign:
-                "center"
+              marginTop: "20px",
+              marginBottom: "20px",
+              padding: "10px 18px",
+              cursor: "pointer"
             }}
           >
-
-            <h2>
-              No Analysis History
-            </h2>
-
-            <p>
-              Complete a skill gap
-              analysis to see it here.
-            </p>
-
-          </div>
-
-        )}
+            🗑 Clear All History
+          </button>
 
 
-      {/* HISTORY */}
+          {history.map(item => (
 
-      {!loading &&
-        !error &&
-        history.length > 0 && (
-
-          <>
-
-            <button
-              onClick={clearHistory}
+            <div
+              key={item.id}
               style={{
-                padding:
-                  "10px 16px",
-                marginBottom:
-                  "20px",
-                cursor:
-                  "pointer"
+                padding: "20px",
+                marginBottom: "20px",
+                border: "1px solid #ddd",
+                borderRadius: "12px",
+                background: "#fff"
               }}
             >
-              🗑 Clear All History
-            </button>
-
-
-            {history.map(item => (
 
               <div
-                key={item.id}
                 style={{
-                  padding: "20px",
-                  marginBottom: "15px",
-                  border:
-                    "1px solid #ddd",
-                  borderRadius:
-                    "12px",
-                  background:
-                    "#ffffff"
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}
+              >
+
+                <h2>
+                  {item.job}
+                </h2>
+
+                <button
+                  onClick={() =>
+                    deleteHistory(item.id)
+                  }
+                  style={{
+                    padding: "8px 14px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Delete
+                </button>
+
+              </div>
+
+
+              <h3>
+                Skill Match: {item.match_percentage}%
+              </h3>
+
+
+              <div
+                style={{
+                  width: "100%",
+                  height: "12px",
+                  background: "#e5e7eb",
+                  borderRadius: "10px"
                 }}
               >
 
                 <div
                   style={{
-                    display:
-                      "flex",
-                    justifyContent:
-                      "space-between",
-                    alignItems:
-                      "center"
+                    width:
+                      `${item.match_percentage}%`,
+                    height: "100%",
+                    background: "#2563eb",
+                    borderRadius: "10px"
                   }}
-                >
-
-                  <h2>
-                    {item.job}
-                  </h2>
-
-
-                  <button
-                    onClick={() =>
-                      deleteItem(
-                        item.id
-                      )
-                    }
-                    style={{
-                      padding:
-                        "8px 12px",
-                      cursor:
-                        "pointer"
-                    }}
-                  >
-                    Delete
-                  </button>
-
-                </div>
-
-
-                <h3>
-                  Skill Match:
-                  {" "}
-                  {item.match_percentage}%
-                </h3>
-
-
-                <div
-                  style={{
-                    width: "100%",
-                    height: "12px",
-                    background:
-                      "#e5e7eb",
-                    borderRadius:
-                      "10px",
-                    overflow:
-                      "hidden"
-                  }}
-                >
-
-                  <div
-                    style={{
-                      width:
-                        `${item.match_percentage}%`,
-                      height: "100%",
-                      background:
-                        "#2563eb"
-                    }}
-                  />
-
-                </div>
-
-
-                <p>
-                  <b>
-                    Date:
-                  </b>{" "}
-                  {item.created_at}
-                </p>
-
-
-                <p>
-                  <b>
-                    Matched Skills:
-                  </b>{" "}
-                  {item.matched?.length || 0}
-                </p>
-
-
-                <p>
-                  <b>
-                    Missing Skills:
-                  </b>{" "}
-                  {item.missing?.length || 0}
-                </p>
-
-
-                {item.matched?.length > 0 && (
-
-                  <p>
-
-                    <b>
-                      Matched:
-                    </b>{" "}
-
-                    {item.matched.join(
-                      ", "
-                    )}
-
-                  </p>
-
-                )}
-
-
-                {item.missing?.length > 0 && (
-
-                  <p>
-
-                    <b>
-                      Missing:
-                    </b>{" "}
-
-                    {item.missing.join(
-                      ", "
-                    )}
-
-                  </p>
-
-                )}
+                />
 
               </div>
 
-            ))}
 
-          </>
+              <p>
+                <b>Date:</b> {item.created_at}
+              </p>
 
-        )}
+
+              <p>
+                <b>Matched Skills:</b>{" "}
+                {item.matched
+                  ? item.matched.join(", ")
+                  : "None"}
+              </p>
+
+
+              <p>
+                <b>Missing Skills:</b>{" "}
+                {item.missing
+                  ? item.missing.join(", ")
+                  : "None"}
+              </p>
+
+            </div>
+
+          ))}
+
+        </>
+
+      )}
 
     </div>
 
   );
-
 }

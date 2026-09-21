@@ -320,6 +320,21 @@ export default function Analyze() {
 
 
       setResult(data);
+      await fetch(
+  "http://127.0.0.1:8000/save-analysis",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      job: job,
+      match_percentage: data.match_percentage,
+      matched: data.matched,
+      missing: data.missing
+    })
+  }
+);
 
 
     } catch (error) {

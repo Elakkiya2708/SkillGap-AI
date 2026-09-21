@@ -214,14 +214,10 @@ def analyze_job(data: dict):
         ""
     )
 
-
     skills = extract_required_skills(text)
 
     return {
-
-        "required_skills":
-            skills
-
+        "required_skills": skills
     }
 
 

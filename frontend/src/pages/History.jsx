@@ -1,295 +1,317 @@
 import { useEffect, useState } from "react";
 
-function History() {
+export default function History() {
 
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const loadHistory = () => {
 
-    fetch("http://127.0.0.1:8000/history")
-      .then(response => response.json())
-      .then(data => {
-        setHistory(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+  const loadHistory = async () => {
+
+    try {
+
+      const response = await fetch(
+        "http://127.0.0.1:8000/history"
+      );
+
+      const data = await response.json();
+
+      setHistory(data);
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Failed to load history");
+
+    } finally {
+
+      setLoading(false);
+
+    }
 
   };
 
+
   useEffect(() => {
+
     loadHistory();
+
   }, []);
 
 
-  const deleteHistory = async (id) => {
+  const deleteItem = async (id) => {
 
-    const confirmDelete = window.confirm(
-      "Delete this analysis?"
-    );
+    try {
 
-    if (!confirmDelete) return;
+      await fetch(
+        `http://127.0.0.1:8000/history/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
 
-    await fetch(
-      `http://127.0.0.1:8000/history/${id}`,
-      {
-        method: "DELETE"
-      }
-    );
+      loadHistory();
 
-    loadHistory();
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Delete failed");
+
+    }
+
   };
 
 
   const clearHistory = async () => {
 
-    const confirmDelete = window.confirm(
-      "Delete all analysis history?"
-    );
+    if (
+      !window.confirm(
+        "Delete all analysis history?"
+      )
+    ) {
+      return;
+    }
 
-    if (!confirmDelete) return;
 
-    await fetch(
-      "http://127.0.0.1:8000/history",
-      {
-        method: "DELETE"
-      }
-    );
+    try {
 
-    loadHistory();
+      await fetch(
+        "http://127.0.0.1:8000/history",
+        {
+          method: "DELETE"
+        }
+      );
+
+      loadHistory();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Failed to clear history");
+
+    }
+
   };
 
 
   return (
+
     <div
       style={{
-        maxWidth: "1000px",
-        margin: "40px auto",
-        padding: "20px"
+        maxWidth: "900px",
+        margin: "auto",
+        padding: "40px",
+        fontFamily: "Arial"
       }}
     >
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "15px"
-        }}
-      >
-
-        <div>
-
-          <h1>
-            Analysis History
-          </h1>
-
-          <p>
-            View your previous skill gap analyses
-          </p>
-
-        </div>
+      <h1>
+        Analysis History
+      </h1>
 
 
-        {history.length > 0 && (
-
-          <button
-            onClick={clearHistory}
-            style={{
-              padding: "10px 16px",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer"
-            }}
-          >
-            Clear All History
-          </button>
-
-        )}
-
-      </div>
+      <p>
+        View your previous skill gap analyses
+      </p>
 
 
       {loading && (
-        <p>Loading history...</p>
-      )}
 
-
-      {!loading && history.length === 0 && (
-
-        <div
-          style={{
-            marginTop: "30px",
-            padding: "30px",
-            border: "1px solid #ddd",
-            borderRadius: "12px",
-            textAlign: "center"
-          }}
-        >
-
-          <h2>
-            No Analysis History
-          </h2>
-
-          <p>
-            Analyze a job to create your first history record.
-          </p>
-
-        </div>
+        <p>
+          Loading history...
+        </p>
 
       )}
 
 
-      {history.map(item => (
-
-        <div
-          key={item.id}
-          style={{
-            marginTop: "20px",
-            padding: "20px",
-            border: "1px solid #ddd",
-            borderRadius: "12px"
-          }}
-        >
+      {!loading &&
+        history.length === 0 && (
 
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "15px"
+              padding: "30px",
+              border: "1px solid #ddd",
+              borderRadius: "12px",
+              textAlign: "center"
             }}
           >
 
-            <div>
+            <h2>
+              No Analysis History
+            </h2>
 
-              <h2>
-                {item.job}
-              </h2>
-
-              <p>
-                {item.created_at}
-              </p>
-
-            </div>
-
-
-            <div
-              style={{
-                fontSize: "28px",
-                fontWeight: "bold"
-              }}
-            >
-              {item.match_percentage}%
-            </div>
+            <p>
+              Complete a skill gap analysis
+              to see it here.
+            </p>
 
           </div>
 
-
-          <hr />
-
-
-          <h3>
-            Matched Skills
-          </h3>
+        )}
 
 
-          {item.matched.length > 0 ? (
+      {!loading &&
+        history.length > 0 && (
 
-            <div>
+          <>
 
-              {item.matched.map(skill => (
+            <button
+              onClick={clearHistory}
+              style={{
+                padding: "10px 16px",
+                marginBottom: "20px",
+                cursor: "pointer"
+              }}
+            >
+              🗑 Clear All History
+            </button>
 
-                <span
-                  key={skill}
+
+            {history.map(item => (
+
+              <div
+                key={item.id}
+                style={{
+                  padding: "20px",
+                  marginBottom: "15px",
+                  border: "1px solid #ddd",
+                  borderRadius: "12px"
+                }}
+              >
+
+                <div
                   style={{
-                    display: "inline-block",
-                    padding: "8px 12px",
-                    margin: "5px",
-                    border: "1px solid #22c55e",
-                    borderRadius: "20px"
+                    display: "flex",
+                    justifyContent:
+                      "space-between",
+                    alignItems: "center"
                   }}
                 >
-                  {skill}
-                </span>
 
-              ))}
-
-            </div>
-
-          ) : (
-
-            <p>
-              No matched skills
-            </p>
-
-          )}
+                  <h2>
+                    {item.job}
+                  </h2>
 
 
-          <h3
-            style={{
-              marginTop: "20px"
-            }}
-          >
-            Missing Skills
-          </h3>
+                  <button
+                    onClick={() =>
+                      deleteItem(item.id)
+                    }
+                    style={{
+                      padding:
+                        "8px 12px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Delete
+                  </button>
+
+                </div>
 
 
-          {item.missing.length > 0 ? (
+                <h3>
+                  Skill Match:
+                  {" "}
+                  {item.match_percentage}%
+                </h3>
 
-            <div>
 
-              {item.missing.map(skill => (
-
-                <span
-                  key={skill}
+                <div
                   style={{
-                    display: "inline-block",
-                    padding: "8px 12px",
-                    margin: "5px",
-                    border: "1px solid #ef4444",
-                    borderRadius: "20px"
+                    width: "100%",
+                    height: "12px",
+                    background: "#e5e7eb",
+                    borderRadius: "10px",
+                    overflow: "hidden"
                   }}
                 >
-                  {skill}
-                </span>
 
-              ))}
+                  <div
+                    style={{
+                      width:
+                        `${item.match_percentage}%`,
+                      height: "100%",
+                      background: "#2563eb"
+                    }}
+                  />
 
-            </div>
-
-          ) : (
-
-            <p>
-              No missing skills
-            </p>
-
-          )}
+                </div>
 
 
-          <button
-            onClick={() => deleteHistory(item.id)}
-            style={{
-              marginTop: "20px",
-              padding: "10px 16px",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer"
-            }}
-          >
-            Delete
-          </button>
+                <p>
+                  <b>
+                    Date:
+                  </b>{" "}
+                  {item.created_at}
+                </p>
 
-        </div>
 
-      ))}
+                <p>
+                  <b>
+                    Matched Skills:
+                  </b>{" "}
+                  {item.matched?.length || 0}
+                </p>
+
+
+                <p>
+                  <b>
+                    Missing Skills:
+                  </b>{" "}
+                  {item.missing?.length || 0}
+                </p>
+
+
+                {item.matched?.length > 0 && (
+
+                  <div>
+
+                    <b>
+                      Matched:
+                    </b>
+
+                    <p>
+                      {item.matched.join(
+                        ", "
+                      )}
+                    </p>
+
+                  </div>
+
+                )}
+
+
+                {item.missing?.length > 0 && (
+
+                  <div>
+
+                    <b>
+                      Missing:
+                    </b>
+
+                    <p>
+                      {item.missing.join(
+                        ", "
+                      )}
+                    </p>
+
+                  </div>
+
+                )}
+
+              </div>
+
+            ))}
+
+          </>
+
+        )}
 
     </div>
-  );
-}
 
-export default History;
+  );
+
+}

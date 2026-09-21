@@ -93,8 +93,7 @@ def get_history():
     """)
 
 
-    rows =
-        cursor.fetchall()
+    rows = cursor.fetchall()
 
 
     conn.close()

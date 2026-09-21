@@ -120,6 +120,7 @@ const jobs = {
 
 
 export default function Analyze() {
+  const [resumeFilename, setResumeFilename] = useState("");
   const [searchSkill, setSearchSkill] = useState("");
   const [completedSkills, setCompletedSkills] = useState([]);
 

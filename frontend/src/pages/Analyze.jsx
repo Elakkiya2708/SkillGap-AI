@@ -1153,6 +1153,44 @@ export default function Analyze() {
 
             )
           )}
+          <button
+  onClick={async () => {
+    const response = await fetch(
+      "http://127.0.0.1:8000/download-report",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          job: job,
+          match_percentage: result.match_percentage,
+          matched: result.matched,
+          missing: result.missing
+        })
+      }
+    );
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "SkillGap_Report.pdf";
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  }}
+  style={{
+    marginTop: "20px",
+    padding: "12px 20px",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer"
+  }}
+>
+  📄 Download Skill Gap Report
+</button>
 
 
           {/* =========================

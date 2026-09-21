@@ -23,26 +23,26 @@ from services.database import (
     clear_history
 )
 
+
 app = FastAPI()
 
 
 app.add_middleware(
     CORSMiddleware,
+
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:5174",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174"
     ],
+
     allow_credentials=True,
+
     allow_methods=["*"],
+
     allow_headers=["*"]
 )
-
-
-class SkillRequest(BaseModel):
-    user_skills: list[str]
-    required_skills: list[str]
 
 
 # =========================
@@ -50,6 +50,17 @@ class SkillRequest(BaseModel):
 # =========================
 
 init_db()
+
+
+# =========================
+# REQUEST MODEL
+# =========================
+
+class SkillRequest(BaseModel):
+
+    user_skills: list[str]
+
+    required_skills: list[str]
 
 
 # =========================
@@ -65,7 +76,7 @@ def home():
 
 
 # =========================
-# ANALYZE SKILLS
+# SKILL GAP
 # =========================
 
 @app.post("/analyze")
@@ -76,75 +87,32 @@ def analyze(data: SkillRequest):
         data.required_skills
     )
 
+
     roadmap = []
+
 
     for skill in result["missing"]:
 
         roadmap.append({
+
             "skill": skill,
-            "priority": get_priority(skill),
-            "steps": get_roadmap(skill),
-            "dependencies": get_dependencies(skill)
+
+            "priority":
+                get_priority(skill),
+
+            "steps":
+                get_roadmap(skill),
+
+            "dependencies":
+                get_dependencies(skill)
+
         })
+
 
     result["roadmap"] = roadmap
 
+
     return result
-
-
-# =========================
-# SAVE ANALYSIS
-# =========================
-
-@app.post("/save-analysis")
-def save_analysis_result(data: dict):
-
-    save_analysis(
-        data.get("job", "N/A"),
-        data.get("match_percentage", 0),
-        data.get("matched", []),
-        data.get("missing", [])
-    )
-
-    return {
-        "message": "Analysis saved successfully"
-    }
-
-
-# =========================
-# GET HISTORY
-# =========================
-
-@app.get("/history")
-def history():
-
-    return get_history()
-
-    @app.delete("/history/{analysis_id}")
-def delete_history(analysis_id: int):
-
-    deleted = delete_analysis(
-        analysis_id
-    )
-
-    if not deleted:
-        return {
-            "message": "Analysis not found"
-        }
-
-    return {
-        "message": "Analysis deleted"
-    }
-
-
-@app.delete("/history")
-def delete_all_history():
-
-    clear_history()
-
-    return {
-        "message": "All history deleted"
-    }
 
 
 # =========================
@@ -161,7 +129,11 @@ async def upload_resume(
         ".docx"
     ]
 
-    filename = file.filename.lower()
+
+    filename = (
+        file.filename or ""
+    ).lower()
+
 
     if not any(
         filename.endswith(ext)
@@ -173,22 +145,65 @@ async def upload_resume(
             "Only PDF and DOCX files are allowed"
         }
 
-    text = extract_text(
-        file.file,
-        file.filename
-    )
 
-    skills = extract_skills(text)
+    try:
 
-    return {
-        "filename": file.filename,
-        "skills": skills,
-        "text_length": len(text)
-    }
+        text = extract_text(
+            file.file,
+            file.filename
+        )
+
+
+        skills = extract_skills(text)
+
+
+        print(
+            "FINAL DETECTED SKILLS:",
+            skills
+        )
+
+
+        return {
+
+            "filename":
+                file.filename,
+
+            "skills":
+                skills,
+
+            "text_length":
+                len(text)
+
+        }
+
+
+    except Exception as e:
+
+        print(
+            "Resume error:",
+            str(e)
+        )
+
+
+        return {
+
+            "filename":
+                file.filename,
+
+            "skills":
+                [],
+
+            "text_length":
+                0,
+
+            "error":
+                str(e)
+
+        }
 
 
 # =========================
-# JOB ANALYZER
+# JOB DESCRIPTION
 # =========================
 
 @app.post("/analyze-job")
@@ -199,15 +214,143 @@ def analyze_job(data: dict):
         ""
     )
 
-    skills = extract_required_skills(text)
+
+    skills =
+        extract_required_skills(text)
+
 
     return {
-        "required_skills": skills
+
+        "required_skills":
+            skills
+
     }
 
 
 # =========================
-# DOWNLOAD PDF REPORT
+# SAVE HISTORY
+# =========================
+
+@app.post("/save-analysis")
+def save_analysis_route(data: dict):
+
+    try:
+
+        save_analysis(
+
+            data.get(
+                "job",
+                "Unknown"
+            ),
+
+            data.get(
+                "match_percentage",
+                0
+            ),
+
+            data.get(
+                "matched",
+                []
+            ),
+
+            data.get(
+                "missing",
+                []
+            )
+
+        )
+
+
+        return {
+            "message":
+                "Analysis saved"
+        }
+
+
+    except Exception as e:
+
+        print(
+            "Save history error:",
+            str(e)
+        )
+
+
+        return {
+            "message":
+                "Failed to save history",
+
+            "error":
+                str(e)
+        }
+
+
+# =========================
+# GET HISTORY
+# =========================
+
+@app.get("/history")
+def history():
+
+    try:
+
+        return get_history()
+
+    except Exception as e:
+
+        print(
+            "History error:",
+            str(e)
+        )
+
+        return []
+
+
+# =========================
+# DELETE ONE HISTORY
+# =========================
+
+@app.delete("/history/{analysis_id}")
+def delete_history(
+    analysis_id: int
+):
+
+    deleted = delete_analysis(
+        analysis_id
+    )
+
+
+    if not deleted:
+
+        return {
+            "message":
+                "Analysis not found"
+        }
+
+
+    return {
+        "message":
+            "Analysis deleted"
+    }
+
+
+# =========================
+# DELETE ALL HISTORY
+# =========================
+
+@app.delete("/history")
+def delete_all_history():
+
+    clear_history()
+
+
+    return {
+        "message":
+            "All history deleted"
+    }
+
+
+# =========================
+# PDF REPORT
 # =========================
 
 @app.post("/download-report")
@@ -215,14 +358,17 @@ def download_report(data: dict):
 
     buffer = io.BytesIO()
 
-    pdf = canvas.Canvas(buffer)
 
-    # TITLE
+    pdf = canvas.Canvas(
+        buffer
+    )
+
 
     pdf.setFont(
         "Helvetica-Bold",
         18
     )
+
 
     pdf.drawString(
         50,
@@ -230,12 +376,12 @@ def download_report(data: dict):
         "SkillGap AI - Career Skill Gap Report"
     )
 
-    # DATE
 
     pdf.setFont(
         "Helvetica",
         10
     )
+
 
     pdf.drawString(
         50,
@@ -246,14 +392,15 @@ def download_report(data: dict):
         )
     )
 
+
     y = 750
 
-    # TARGET JOB
 
     pdf.setFont(
         "Helvetica",
         12
     )
+
 
     pdf.drawString(
         50,
@@ -265,23 +412,25 @@ def download_report(data: dict):
         )
     )
 
-    # RESUME
-
-    y -= 25
-
-    pdf.drawString(
-        50,
-        y,
-        "Resume: "
-        + data.get(
-            "resume_filename",
-            "N/A"
-        )
-    )
-
-    # MATCH
 
     y -= 30
+
+
+    if data.get(
+        "resume_filename"
+    ):
+
+        pdf.drawString(
+            50,
+            y,
+            "Resume: "
+            + data.get(
+                "resume_filename"
+            )
+        )
+
+        y -= 30
+
 
     pdf.drawString(
         50,
@@ -296,14 +445,15 @@ def download_report(data: dict):
         + "%"
     )
 
-    # MATCHED
 
     y -= 40
+
 
     pdf.setFont(
         "Helvetica-Bold",
         14
     )
+
 
     pdf.drawString(
         50,
@@ -311,17 +461,21 @@ def download_report(data: dict):
         "Matched Skills"
     )
 
+
     y -= 25
+
 
     pdf.setFont(
         "Helvetica",
         11
     )
 
+
     matched = data.get(
         "matched",
         []
     )
+
 
     if matched:
 
@@ -345,14 +499,15 @@ def download_report(data: dict):
 
         y -= 20
 
-    # MISSING
 
     y -= 20
+
 
     pdf.setFont(
         "Helvetica-Bold",
         14
     )
+
 
     pdf.drawString(
         50,
@@ -360,17 +515,21 @@ def download_report(data: dict):
         "Missing Skills"
     )
 
+
     y -= 25
+
 
     pdf.setFont(
         "Helvetica",
         11
     )
 
+
     missing = data.get(
         "missing",
         []
     )
+
 
     if missing:
 
@@ -394,14 +553,15 @@ def download_report(data: dict):
 
         y -= 20
 
-    # ROADMAP
 
     y -= 20
+
 
     pdf.setFont(
         "Helvetica-Bold",
         14
     )
+
 
     pdf.drawString(
         50,
@@ -409,17 +569,21 @@ def download_report(data: dict):
         "Learning Roadmap"
     )
 
+
     y -= 25
+
 
     pdf.setFont(
         "Helvetica",
         11
     )
 
+
     roadmap = data.get(
         "roadmap",
         []
     )
+
 
     for item in roadmap:
 
@@ -428,10 +592,12 @@ def download_report(data: dict):
             "Unknown"
         )
 
+
         priority = item.get(
             "priority",
             "Low"
         )
+
 
         pdf.drawString(
             60,
@@ -441,7 +607,9 @@ def download_report(data: dict):
             + priority
         )
 
+
         y -= 20
+
 
         if y < 60:
 
@@ -454,81 +622,23 @@ def download_report(data: dict):
 
             y = 800
 
-    # DEPENDENCIES
-
-    y -= 20
-
-    pdf.setFont(
-        "Helvetica-Bold",
-        14
-    )
-
-    pdf.drawString(
-        50,
-        y,
-        "Skill Dependencies"
-    )
-
-    y -= 25
-
-    pdf.setFont(
-        "Helvetica",
-        11
-    )
-
-    for item in roadmap:
-
-        skill = item.get(
-            "skill",
-            ""
-        )
-
-        dependencies = item.get(
-            "dependencies",
-            []
-        )
-
-        if dependencies:
-
-            dependency_text = (
-                skill
-                + " -> "
-                + ", ".join(
-                    dependencies
-                )
-            )
-
-            pdf.drawString(
-                60,
-                y,
-                dependency_text[:100]
-            )
-
-            y -= 20
-
-            if y < 60:
-
-                pdf.showPage()
-
-                pdf.setFont(
-                    "Helvetica",
-                    11
-                )
-
-                y = 800
-
-    # SAVE
 
     pdf.save()
 
+
     buffer.seek(0)
 
+
     return StreamingResponse(
+
         buffer,
+
         media_type="application/pdf",
+
         headers={
             "Content-Disposition":
             "attachment; "
             "filename=SkillGap_Report.pdf"
         }
+
     )

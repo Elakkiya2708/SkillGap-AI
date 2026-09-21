@@ -833,6 +833,60 @@ export default function Analyze() {
   ))}
 </div>
 
+<div
+  style={{
+    display: "flex",
+    gap: "20px",
+    marginTop: "20px",
+    flexWrap: "wrap"
+  }}
+>
+  <div
+    style={{
+      flex: 1,
+      minWidth: "180px",
+      padding: "20px",
+      border: "1px solid #ddd",
+      borderRadius: "12px",
+      textAlign: "center"
+    }}
+  >
+    <h3>Matched Skills</h3>
+    <h1>{result.matched.length}</h1>
+    <p>Skills you already have</p>
+  </div>
+
+  <div
+    style={{
+      flex: 1,
+      minWidth: "180px",
+      padding: "20px",
+      border: "1px solid #ddd",
+      borderRadius: "12px",
+      textAlign: "center"
+    }}
+  >
+    <h3>Missing Skills</h3>
+    <h1>{result.missing.length}</h1>
+    <p>Skills to improve</p>
+  </div>
+
+  <div
+    style={{
+      flex: 1,
+      minWidth: "180px",
+      padding: "20px",
+      border: "1px solid #ddd",
+      borderRadius: "12px",
+      textAlign: "center"
+    }}
+  >
+    <h3>Readiness</h3>
+    <h1>{result.match_percentage}%</h1>
+    <p>Current skill readiness</p>
+  </div>
+</div>
+
           {/* =========================
               LEARNING ROADMAP
           ========================= */}
@@ -959,125 +1013,57 @@ export default function Analyze() {
 
 
           {/* =========================
-              SKILL DEPENDENCY GRAPH
-          ========================= */}
+    SKILL DEPENDENCY GRAPH
+========================= */}
 
-          <h2>
-            Skill Dependency Graph
-          </h2>
+<h2>
+  Skill Dependency Graph
+</h2>
 
+<div
+  style={{
+    marginTop: "20px",
+    padding: "25px",
+    border: "1px solid #ddd",
+    borderRadius: "12px"
+  }}
+>
+  {result.roadmap.map(item => (
+    <div
+      key={item.skill}
+      style={{
+        marginTop: "20px",
+        padding: "15px",
+        border: "1px solid #ccc",
+        borderRadius: "10px"
+      }}
+    >
+      <strong>{item.skill}</strong>
 
-          <div
-            style={{
-              border:
-                "1px solid #ddd",
-
-              borderRadius:
-                "12px",
-
-              padding:
-                "20px",
-
-              marginTop:
-                "15px"
-            }}
-          >
-
-            {result.roadmap.map(
-              item => (
-
-                <div
-                  key={
-                    "graph-" +
-                    item.skill
-                  }
-                  style={{
-                    marginBottom:
-                      "20px"
-                  }}
-                >
-
-                  <div
-                    style={{
-                      display:
-                        "inline-block",
-
-                      padding:
-                        "10px 16px",
-
-                      border:
-                        "2px solid #333",
-
-                      borderRadius:
-                        "8px",
-
-                      fontWeight:
-                        "bold"
-                    }}
-                  >
-                    {item.skill}
-                  </div>
-
-
-                  {item.dependencies &&
-                    item.dependencies.length > 0 && (
-
-                      <div
-                        style={{
-                          marginTop:
-                            "10px",
-
-                          marginLeft:
-                            "30px"
-                        }}
-                      >
-
-                        <div>
-                          ↓
-                        </div>
-
-
-                        {item.dependencies.map(
-                          dependency => (
-
-                            <div
-                              key={
-                                item.skill +
-                                dependency
-                              }
-                              style={{
-                                display:
-                                  "inline-block",
-
-                                padding:
-                                  "8px 14px",
-
-                                margin:
-                                  "5px",
-
-                                border:
-                                  "1px solid #999",
-
-                                borderRadius:
-                                  "8px"
-                              }}
-                            >
-                              {dependency}
-                            </div>
-
-                          )
-                        )}
-
-                      </div>
-
-                    )}
-
-                </div>
-
-              )
-            )}
-
-          </div>
+      {item.dependencies &&
+      item.dependencies.length > 0 ? (
+        <div style={{ marginTop: "10px" }}>
+          {item.dependencies.map(dep => (
+            <span
+              key={dep}
+              style={{
+                display: "inline-block",
+                padding: "8px 12px",
+                margin: "5px",
+                border: "1px solid #2563eb",
+                borderRadius: "20px"
+              }}
+            >
+              → {dep}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p>No dependencies available</p>
+      )}
+    </div>
+  ))}
+</div>
 
         </div>
 

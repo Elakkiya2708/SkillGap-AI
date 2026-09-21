@@ -120,6 +120,32 @@ def history():
 
     return get_history()
 
+    @app.delete("/history/{analysis_id}")
+def delete_history(analysis_id: int):
+
+    deleted = delete_analysis(
+        analysis_id
+    )
+
+    if not deleted:
+        return {
+            "message": "Analysis not found"
+        }
+
+    return {
+        "message": "Analysis deleted"
+    }
+
+
+@app.delete("/history")
+def delete_all_history():
+
+    clear_history()
+
+    return {
+        "message": "All history deleted"
+    }
+
 
 # =========================
 # RESUME UPLOAD

@@ -190,6 +190,7 @@ export default function Analyze() {
 
       const data =
         await uploadResume(file);
+        setResumeFilename(data.filename);
 
 
       setDetectedSkills(

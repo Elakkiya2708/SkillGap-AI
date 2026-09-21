@@ -962,6 +962,13 @@ export default function Analyze() {
   >
     <h3>Readiness</h3>
     <h1>{result.match_percentage}%</h1>
+    <p style={{ fontWeight: "bold" }}>
+  {result.match_percentage >= 80
+    ? "🎯 Strong career readiness"
+    : result.match_percentage >= 60
+    ? "📈 Good progress — improve missing skills"
+    : "🚀 Focus on the missing skills to improve readiness"}
+</p>
     <p>Current skill readiness</p>
   </div>
 </div>
@@ -997,7 +1004,13 @@ export default function Analyze() {
     {completedSkills.length} of{" "}
     {result.roadmap.length} skills completed
   </p>
-
+<p style={{ fontWeight: "bold" }}>
+  {completedSkills.length === 0
+    ? "Start learning your missing skills"
+    : completedSkills.length === result.roadmap.length
+    ? "🎉 All skills completed!"
+    : "🚀 Keep learning and improve your skills"}
+</p>
   <div
     style={{
       width: "100%",

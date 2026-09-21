@@ -8,7 +8,9 @@ from services.roadmap import get_roadmap
 from services.resume import extract_text, extract_skills
 from services.job_analyzer import extract_required_skills
 from services.dependency import get_dependencies
-
+from fastapi.responses import StreamingResponse
+from reportlab.pdfgen import canvas
+import io
 
 app = FastAPI()
 

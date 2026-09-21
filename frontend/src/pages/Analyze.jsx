@@ -791,6 +791,20 @@ export default function Analyze() {
           <h3>
             Missing Skills
           </h3>
+          <input
+  type="text"
+  placeholder="Search missing skills..."
+  value={searchSkill}
+  onChange={e => setSearchSkill(e.target.value)}
+  style={{
+    width: "100%",
+    padding: "12px",
+    marginTop: "10px",
+    marginBottom: "15px",
+    border: "1px solid #ccc",
+    borderRadius: "8px"
+  }}
+/>
 
 
           {result.roadmap.map(item => (

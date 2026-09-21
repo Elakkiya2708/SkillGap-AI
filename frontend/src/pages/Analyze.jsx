@@ -5,7 +5,7 @@ import {
   uploadResume
 } from "../services/api";
 
-const [completedSkills, setCompletedSkills] = useState([]);
+
 const jobs = {
 
   "Software Developer": [
@@ -120,6 +120,8 @@ const jobs = {
 
 
 export default function Analyze() {
+  const [searchSkill, setSearchSkill] = useState("");
+  const [completedSkills, setCompletedSkills] = useState([]);
 
   const [userSkills, setUserSkills] =
     useState("");

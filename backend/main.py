@@ -15,6 +15,12 @@ from services.resume import extract_text, extract_skills
 from services.job_analyzer import extract_required_skills
 from services.dependency import get_dependencies
 
+from services.database import (
+    init_db,
+    save_analysis,
+    get_history
+)
+
 
 app = FastAPI()
 
@@ -38,12 +44,28 @@ class SkillRequest(BaseModel):
     required_skills: list[str]
 
 
+# =========================
+# DATABASE
+# =========================
+
+init_db()
+
+
+# =========================
+# HOME
+# =========================
+
 @app.get("/")
 def home():
+
     return {
         "message": "SkillGap AI API is running"
     }
 
+
+# =========================
+# ANALYZE SKILLS
+# =========================
 
 @app.post("/analyze")
 def analyze(data: SkillRequest):
@@ -68,6 +90,39 @@ def analyze(data: SkillRequest):
 
     return result
 
+
+# =========================
+# SAVE ANALYSIS
+# =========================
+
+@app.post("/save-analysis")
+def save_analysis_result(data: dict):
+
+    save_analysis(
+        data.get("job", "N/A"),
+        data.get("match_percentage", 0),
+        data.get("matched", []),
+        data.get("missing", [])
+    )
+
+    return {
+        "message": "Analysis saved successfully"
+    }
+
+
+# =========================
+# GET HISTORY
+# =========================
+
+@app.get("/history")
+def history():
+
+    return get_history()
+
+
+# =========================
+# RESUME UPLOAD
+# =========================
 
 @app.post("/upload-resume")
 async def upload_resume(
@@ -105,6 +160,10 @@ async def upload_resume(
     }
 
 
+# =========================
+# JOB ANALYZER
+# =========================
+
 @app.post("/analyze-job")
 def analyze_job(data: dict):
 
@@ -120,6 +179,10 @@ def analyze_job(data: dict):
     }
 
 
+# =========================
+# DOWNLOAD PDF REPORT
+# =========================
+
 @app.post("/download-report")
 def download_report(data: dict):
 
@@ -127,9 +190,7 @@ def download_report(data: dict):
 
     pdf = canvas.Canvas(buffer)
 
-    # =========================
     # TITLE
-    # =========================
 
     pdf.setFont(
         "Helvetica-Bold",
@@ -142,9 +203,7 @@ def download_report(data: dict):
         "SkillGap AI - Career Skill Gap Report"
     )
 
-    # =========================
     # DATE
-    # =========================
 
     pdf.setFont(
         "Helvetica",
@@ -162,9 +221,7 @@ def download_report(data: dict):
 
     y = 750
 
-    # =========================
     # TARGET JOB
-    # =========================
 
     pdf.setFont(
         "Helvetica",
@@ -181,9 +238,7 @@ def download_report(data: dict):
         )
     )
 
-    # =========================
     # RESUME
-    # =========================
 
     y -= 25
 
@@ -197,9 +252,7 @@ def download_report(data: dict):
         )
     )
 
-    # =========================
-    # SKILL MATCH
-    # =========================
+    # MATCH
 
     y -= 30
 
@@ -216,9 +269,7 @@ def download_report(data: dict):
         + "%"
     )
 
-    # =========================
-    # MATCHED SKILLS
-    # =========================
+    # MATCHED
 
     y -= 40
 
@@ -267,9 +318,7 @@ def download_report(data: dict):
 
         y -= 20
 
-    # =========================
-    # MISSING SKILLS
-    # =========================
+    # MISSING
 
     y -= 20
 
@@ -318,9 +367,7 @@ def download_report(data: dict):
 
         y -= 20
 
-    # =========================
-    # LEARNING ROADMAP
-    # =========================
+    # ROADMAP
 
     y -= 20
 
@@ -380,9 +427,7 @@ def download_report(data: dict):
 
             y = 800
 
-    # =========================
-    # SKILL DEPENDENCIES
-    # =========================
+    # DEPENDENCIES
 
     y -= 20
 
@@ -445,9 +490,7 @@ def download_report(data: dict):
 
                 y = 800
 
-    # =========================
-    # SAVE PDF
-    # =========================
+    # SAVE
 
     pdf.save()
 

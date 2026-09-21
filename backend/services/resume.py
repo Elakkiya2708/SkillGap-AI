@@ -72,8 +72,7 @@ def extract_text(
     filename
 ):
 
-    filename =
-        filename.lower()
+    filename = filename.lower()
 
 
     # =========================

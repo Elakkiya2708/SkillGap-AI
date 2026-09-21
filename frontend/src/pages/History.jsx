@@ -18,93 +18,32 @@ export default function History() {
   // =========================
 
   const loadHistory = async () => {
+  setLoading(true);
+  setError("");
 
-    setLoading(true);
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/history"
+    );
 
-    setError("");
-
-
-    try {
-
-      const controller =
-        new AbortController();
-
-
-      const timeout =
-        setTimeout(
-          () => controller.abort(),
-          5000
-        );
-
-
-      const response =
-        await fetch(
-          "http://127.0.0.1:8000/history",
-          {
-            method: "GET",
-            signal:
-              controller.signal
-          }
-        );
-
-
-      clearTimeout(timeout);
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          `Server error: ${response.status}`
-        );
-
-      }
-
-
-      const data =
-        await response.json();
-
-
-      console.log(
-        "History:",
-        data
-      );
-
-
-      if (Array.isArray(data)) {
-
-        setHistory(data);
-
-      } else {
-
-        setHistory([]);
-
-      }
-
-
-    } catch (err) {
-
-      console.error(
-        "History error:",
-        err
-      );
-
-
-      setError(
-        "Unable to load history. Make sure backend is running."
-      );
-
-
-      setHistory([]);
-
-
-    } finally {
-
-      setLoading(false);
-
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
     }
 
-  };
+    const data = await response.json();
 
+    console.log("History data:", data);
+
+    setHistory(Array.isArray(data) ? data : []);
+
+  } catch (err) {
+    console.error("History error:", err);
+    setError("Unable to load history. Make sure backend is running.");
+    setHistory([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // =========================
   // LOAD ON PAGE OPEN

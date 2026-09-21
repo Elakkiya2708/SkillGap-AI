@@ -1166,6 +1166,7 @@ export default function Analyze() {
         },
         body: JSON.stringify({
           job: job,
+          resume_filename: resumeFilename,
           match_percentage: result.match_percentage,
           matched: result.matched,
           missing: result.missing,

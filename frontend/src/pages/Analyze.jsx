@@ -158,72 +158,112 @@ export default function Analyze() {
 
   const handleResume = async (e) => {
 
-    const file =
-      e.target.files[0];
+  const file = e.target.files[0];
 
-    if (!file) return;
-
-
-    const allowed = [
-      ".pdf",
-      ".docx"
-    ];
+  if (!file) return;
 
 
-    const valid =
-      allowed.some(
-        ext =>
-          file.name
-            .toLowerCase()
-            .endsWith(ext)
-      );
+  const allowed = [".pdf", ".docx"];
+
+  const valid = allowed.some(
+    ext =>
+      file.name
+        .toLowerCase()
+        .endsWith(ext)
+  );
 
 
-    if (!valid) {
+  if (!valid) {
 
-      alert(
-        "Please upload PDF or DOCX file"
-      );
+    alert("Please upload PDF or DOCX file");
 
-      return;
-    }
+    return;
+  }
 
 
-    setResume(file.name);
+  setResume(file.name);
 
 
-    try {
+  try {
 
-      const data =
-        await uploadResume(file);
+    const formData = new FormData();
 
-      setResumeFilename(
-        data.filename
-      );
+    formData.append("file", file);
 
 
-      setDetectedSkills(
-        data.skills || []
-      );
+    const response = await fetch(
+      "http://127.0.0.1:8000/upload-resume",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
 
 
-      setUserSkills(
-        (data.skills || [])
-          .join(", ")
-      );
+    if (!response.ok) {
 
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert(
+      throw new Error(
         "Resume upload failed"
       );
 
     }
 
-  };
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "Resume response:",
+      data
+    );
+
+
+    const skills =
+      data.skills || [];
+
+
+    setResumeFilename(
+      data.filename || file.name
+    );
+
+
+    setDetectedSkills(
+      skills
+    );
+
+
+    // AUTOMATICALLY FILL YOUR SKILLS
+
+    setUserSkills(
+      skills.join(", ")
+    );
+
+
+    if (skills.length === 0) {
+
+      alert(
+        "Resume uploaded, but no skills were detected. Please check the backend terminal."
+      );
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Resume upload error:",
+      error
+    );
+
+
+    alert(
+      "Resume upload failed"
+    );
+
+  }
+
+};
 
 
   // =========================

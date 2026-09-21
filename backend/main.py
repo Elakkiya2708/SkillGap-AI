@@ -19,10 +19,6 @@ from services.dependency import get_dependencies
 app = FastAPI()
 
 
-# =========================
-# CORS
-# =========================
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -37,31 +33,17 @@ app.add_middleware(
 )
 
 
-# =========================
-# REQUEST MODEL
-# =========================
-
 class SkillRequest(BaseModel):
-
     user_skills: list[str]
     required_skills: list[str]
 
 
-# =========================
-# HOME
-# =========================
-
 @app.get("/")
 def home():
-
     return {
         "message": "SkillGap AI API is running"
     }
 
-
-# =========================
-# SKILL GAP ANALYSIS
-# =========================
 
 @app.post("/analyze")
 def analyze(data: SkillRequest):
@@ -86,10 +68,6 @@ def analyze(data: SkillRequest):
 
     return result
 
-
-# =========================
-# RESUME UPLOAD
-# =========================
 
 @app.post("/upload-resume")
 async def upload_resume(
@@ -127,10 +105,6 @@ async def upload_resume(
     }
 
 
-# =========================
-# JOB DESCRIPTION ANALYSIS
-# =========================
-
 @app.post("/analyze-job")
 def analyze_job(data: dict):
 
@@ -145,10 +119,6 @@ def analyze_job(data: dict):
         "required_skills": skills
     }
 
-
-# =========================
-# PDF REPORT
-# =========================
 
 @app.post("/download-report")
 def download_report(data: dict):
@@ -211,11 +181,27 @@ def download_report(data: dict):
         )
     )
 
-    y -= 30
+    # =========================
+    # RESUME
+    # =========================
+
+    y -= 25
+
+    pdf.drawString(
+        50,
+        y,
+        "Resume: "
+        + data.get(
+            "resume_filename",
+            "N/A"
+        )
+    )
 
     # =========================
     # SKILL MATCH
     # =========================
+
+    y -= 30
 
     pdf.drawString(
         50,
@@ -230,11 +216,11 @@ def download_report(data: dict):
         + "%"
     )
 
-    y -= 40
-
     # =========================
     # MATCHED SKILLS
     # =========================
+
+    y -= 40
 
     pdf.setFont(
         "Helvetica-Bold",
@@ -281,11 +267,11 @@ def download_report(data: dict):
 
         y -= 20
 
-    y -= 20
-
     # =========================
     # MISSING SKILLS
     # =========================
+
+    y -= 20
 
     pdf.setFont(
         "Helvetica-Bold",
@@ -332,11 +318,11 @@ def download_report(data: dict):
 
         y -= 20
 
-    y -= 20
-
     # =========================
     # LEARNING ROADMAP
     # =========================
+
+    y -= 20
 
     pdf.setFont(
         "Helvetica-Bold",
@@ -394,11 +380,11 @@ def download_report(data: dict):
 
             y = 800
 
-    y -= 20
-
     # =========================
     # SKILL DEPENDENCIES
     # =========================
+
+    y -= 20
 
     pdf.setFont(
         "Helvetica-Bold",

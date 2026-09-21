@@ -150,8 +150,7 @@ def delete_analysis(
     )
 
 
-    deleted =
-        cursor.rowcount > 0
+    deleted = cursor.rowcount > 0
 
 
     conn.commit()

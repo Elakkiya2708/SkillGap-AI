@@ -99,8 +99,7 @@ def extract_text(
 
                 for page in pdf.pages:
 
-                    page_text =
-                        page.extract_text(
+                    page_text = page.extract_text(
                             x_tolerance=2,
                             y_tolerance=3
                         )

@@ -792,15 +792,27 @@ export default function Analyze() {
           </h3>
 
 
-          {result.missing.map(
-            skill => (
+          {result.roadmap.map(item => (
+  <div
+    key={item.skill}
+    style={{
+      padding: "15px",
+      marginTop: "10px",
+      border: "1px solid #ddd",
+      borderRadius: "10px"
+    }}
+  >
+    <strong>{item.skill}</strong>
 
-              <p key={skill}>
-                ✗ {skill}
-              </p>
+    <p>
+      Priority: <b>{item.priority}</b>
+    </p>
 
-            )
-          )}
+    <p>
+      Next Step: Learn {item.skill} basics
+    </p>
+  </div>
+))}
 
           <div
   style={{

@@ -236,8 +236,7 @@ def extract_skills(text):
 
     for skill in SKILLS:
 
-        skill_lower =
-            skill.lower()
+        skill_lower = skill.lower()
 
 
         # C++

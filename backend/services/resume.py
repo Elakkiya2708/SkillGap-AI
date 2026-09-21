@@ -1,40 +1,80 @@
 import re
+import io
+
 import pdfplumber
+
 from pypdf import PdfReader
+
 from docx import Document
 
 
 SKILLS = [
+
     "Python",
     "Java",
     "C++",
     "JavaScript",
+
     "HTML",
     "CSS",
+
     "React",
     "Node.js",
+
     "FastAPI",
+
     "SQL",
     "MongoDB",
+
     "Git",
+
     "Docker",
     "AWS",
+
     "Excel",
     "Power BI",
+
     "Statistics",
+
     "Machine Learning",
     "Data Science",
+
     "TensorFlow",
     "PyTorch",
+
     "REST API",
+
     "Artificial Intelligence",
-    "Deep Learning"
+    "Deep Learning",
+
+    "Spring",
+    "Spring Boot",
+
+    "Linux",
+
+    "Kubernetes",
+
+    "Azure",
+    "GCP",
+
+    "Tableau",
+
+    "Pandas",
+    "NumPy",
+
+    "Scikit-learn"
+
 ]
 
 
-def extract_text(file, filename):
+def extract_text(
+    file,
+    filename
+):
 
-    filename = filename.lower()
+    filename =
+        filename.lower()
+
 
     # =========================
     # PDF
@@ -42,28 +82,39 @@ def extract_text(file, filename):
 
     if filename.endswith(".pdf"):
 
-        pdf_bytes = file.read()
+        pdf_bytes =
+            file.read()
+
 
         text = ""
 
-        # Method 1 - pdfplumber
+
+        # First: pdfplumber
+
         try:
 
-            import io
-
             with pdfplumber.open(
-                io.BytesIO(pdf_bytes)
+                io.BytesIO(
+                    pdf_bytes
+                )
             ) as pdf:
 
                 for page in pdf.pages:
 
-                    page_text = page.extract_text(
-                        x_tolerance=2,
-                        y_tolerance=3
-                    )
+                    page_text =
+                        page.extract_text(
+                            x_tolerance=2,
+                            y_tolerance=3
+                        )
+
 
                     if page_text:
-                        text += page_text + "\n"
+
+                        text += (
+                            page_text
+                            + "\n"
+                        )
+
 
         except Exception as e:
 
@@ -73,30 +124,37 @@ def extract_text(file, filename):
             )
 
 
-        # Method 2 - pypdf fallback
-        if len(text.strip()) < 20:
+        # Second: pypdf fallback
+
+        if len(
+            text.strip()
+        ) < 20:
 
             try:
 
-                import io
+                reader =
+                    PdfReader(
+                        io.BytesIO(
+                            pdf_bytes
+                        )
+                    )
 
-                reader = PdfReader(
-                    io.BytesIO(pdf_bytes)
-                )
 
                 text = ""
 
+
                 for page in reader.pages:
 
-                    page_text = (
+                    page_text =
                         page.extract_text()
                         or ""
-                    )
+
 
                     text += (
-                        page_text +
-                        "\n"
+                        page_text
+                        + "\n"
                     )
+
 
             except Exception as e:
 
@@ -111,10 +169,15 @@ def extract_text(file, filename):
             len(text)
         )
 
+
         print(
-            "Extracted text preview:",
-            text[:1000]
+            "Extracted text:"
         )
+
+        print(
+            text[:2000]
+        )
+
 
         return text
 
@@ -125,16 +188,22 @@ def extract_text(file, filename):
 
     if filename.endswith(".docx"):
 
-        document = Document(file)
+        document =
+            Document(file)
+
 
         text = ""
 
-        for paragraph in document.paragraphs:
+
+        for paragraph in (
+            document.paragraphs
+        ):
 
             text += (
-                paragraph.text +
-                "\n"
+                paragraph.text
+                + "\n"
             )
+
 
         return text
 
@@ -146,15 +215,21 @@ def extract_skills(text):
 
     found = []
 
+
     if not text:
 
-        print("No text extracted from resume")
+        print(
+            "No text extracted"
+        )
 
         return found
 
 
-    # Normalize text
-    text_lower = text.lower()
+    text_lower =
+        text.lower()
+
+
+    # Normalize spaces
 
     text_lower = re.sub(
         r"\s+",
@@ -164,55 +239,116 @@ def extract_skills(text):
 
 
     # =========================
-    # SKILL DETECTION
+    # SKILL MATCHING
     # =========================
 
     for skill in SKILLS:
 
-        skill_lower = skill.lower()
+        skill_lower =
+            skill.lower()
 
 
-        # Special C++
+        # C++
+
         if skill_lower == "c++":
 
             if "c++" in text_lower:
 
-                found.append(skill)
+                found.append(
+                    skill
+                )
 
             continue
 
 
-        # Special Node.js
+        # Node.js
+
         if skill_lower == "node.js":
 
             if (
-                "node.js" in text_lower
-                or "node js" in text_lower
-                or "nodejs" in text_lower
+                "node.js"
+                in text_lower
+                or
+                "node js"
+                in text_lower
+                or
+                "nodejs"
+                in text_lower
             ):
 
-                found.append(skill)
+                found.append(
+                    skill
+                )
 
             continue
 
 
-        # Special React
+        # React
+
         if skill_lower == "react":
 
             if (
-                "react" in text_lower
-                or "react.js" in text_lower
+                re.search(
+                    r"\breact\b",
+                    text_lower
+                )
+                or
+                "react.js"
+                in text_lower
             ):
 
-                found.append(skill)
+                found.append(
+                    skill
+                )
 
             continue
 
 
-        # Normal skill
+        # Machine Learning
+
+        if skill_lower == "machine learning":
+
+            if (
+                "machine learning"
+                in text_lower
+                or
+                "machine-learning"
+                in text_lower
+            ):
+
+                found.append(
+                    skill
+                )
+
+            continue
+
+
+        # REST API
+
+        if skill_lower == "rest api":
+
+            if (
+                "rest api"
+                in text_lower
+                or
+                "restful api"
+                in text_lower
+            ):
+
+                found.append(
+                    skill
+                )
+
+            continue
+
+
+        # Normal skills
+
         pattern = (
             r"(?<![a-z0-9])"
-            + re.escape(skill_lower)
+            + re.escape(
+                skill_lower
+            )
             + r"(?![a-z0-9])"
         )
 
@@ -222,12 +358,17 @@ def extract_skills(text):
             text_lower
         ):
 
-            found.append(skill)
+            found.append(
+                skill
+            )
 
 
     # Remove duplicates
+
     found = list(
-        dict.fromkeys(found)
+        dict.fromkeys(
+            found
+        )
     )
 
 

@@ -680,6 +680,50 @@ export default function Analyze() {
               borderRadius: "12px"
             }}
           >
+            <div
+  style={{
+    marginTop: "20px",
+    padding: "20px",
+    border: "1px solid #ddd",
+    borderRadius: "12px"
+  }}
+>
+  <h2>Skill Priority Summary</h2>
+
+  <div
+    style={{
+      display: "flex",
+      gap: "15px",
+      flexWrap: "wrap"
+    }}
+  >
+    {["Critical", "High", "Medium", "Low"].map(priority => (
+      <div
+        key={priority}
+        style={{
+          flex: 1,
+          minWidth: "120px",
+          padding: "15px",
+          border: "1px solid #ddd",
+          borderRadius: "10px",
+          textAlign: "center"
+        }}
+      >
+        <h3>{priority}</h3>
+
+        <h2>
+          {
+            result.roadmap.filter(
+              item => item.priority === priority
+            ).length
+          }
+        </h2>
+
+        <p>Missing skills</p>
+      </div>
+    ))}
+  </div>
+</div>
 
             <h3>
               Skill Gap Summary

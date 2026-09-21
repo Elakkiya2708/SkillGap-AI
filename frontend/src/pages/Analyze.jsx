@@ -285,28 +285,68 @@ export default function Analyze() {
 
   const analyze = async () => {
 
-    const user =
-      userSkills
-        .split(",")
-        .map(
-          skill => skill.trim()
-        )
-        .filter(Boolean);
+  const user =
+    userSkills
+      .split(",")
+      .map(skill => skill.trim())
+      .filter(Boolean);
 
+  const finalUserSkills =
+    user.length > 0
+      ? user
+      : detectedSkills;
 
-    const required =
-      requiredSkills.length > 0
-        ? requiredSkills
-        : jobs[job];
+  const required =
+    requiredSkills.length > 0
+      ? requiredSkills
+      : jobs[job];
 
+  if (finalUserSkills.length === 0) {
 
-    if (user.length === 0) {
+    alert(
+      "Please upload a resume or enter your skills"
+    );
 
-      alert(
-        "Please upload a resume or enter your skills"
+    return;
+  }
+
+  try {
+
+    const data =
+      await analyzeSkills(
+        finalUserSkills,
+        required
       );
 
-      return;
+    setResult(data);
+
+    await fetch(
+      "http://127.0.0.1:8000/save-analysis",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          job: job,
+          match_percentage: data.match_percentage,
+          matched: data.matched,
+          missing: data.missing
+        })
+      }
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Analysis failed");
+
+  }
+
+};
     }
 
 

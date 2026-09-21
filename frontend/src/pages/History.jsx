@@ -1,28 +1,101 @@
 import { useEffect, useState } from "react";
 
+
 export default function History() {
 
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [history, setHistory] =
+    useState([]);
 
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+
+  // =========================
+  // LOAD HISTORY
+  // =========================
 
   const loadHistory = async () => {
 
+    setLoading(true);
+
+    setError("");
+
+
     try {
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/history"
+      const controller =
+        new AbortController();
+
+
+      const timeout =
+        setTimeout(
+          () => controller.abort(),
+          5000
+        );
+
+
+      const response =
+        await fetch(
+          "http://127.0.0.1:8000/history",
+          {
+            method: "GET",
+            signal:
+              controller.signal
+          }
+        );
+
+
+      clearTimeout(timeout);
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          `Server error: ${response.status}`
+        );
+
+      }
+
+
+      const data =
+        await response.json();
+
+
+      console.log(
+        "History:",
+        data
       );
 
-      const data = await response.json();
 
-      setHistory(data);
+      if (Array.isArray(data)) {
 
-    } catch (error) {
+        setHistory(data);
 
-      console.error(error);
+      } else {
 
-      alert("Failed to load history");
+        setHistory([]);
+
+      }
+
+
+    } catch (err) {
+
+      console.error(
+        "History error:",
+        err
+      );
+
+
+      setError(
+        "Unable to load history. Make sure backend is running."
+      );
+
+
+      setHistory([]);
+
 
     } finally {
 
@@ -33,6 +106,10 @@ export default function History() {
   };
 
 
+  // =========================
+  // LOAD ON PAGE OPEN
+  // =========================
+
   useEffect(() => {
 
     loadHistory();
@@ -40,29 +117,51 @@ export default function History() {
   }, []);
 
 
+  // =========================
+  // DELETE ONE
+  // =========================
+
   const deleteItem = async (id) => {
 
     try {
 
-      await fetch(
-        `http://127.0.0.1:8000/history/${id}`,
-        {
-          method: "DELETE"
-        }
+      const response =
+        await fetch(
+          `http://127.0.0.1:8000/history/${id}`,
+          {
+            method: "DELETE"
+          }
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "Delete failed"
+        );
+
+      }
+
+
+      await loadHistory();
+
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert(
+        "Failed to delete history"
       );
-
-      loadHistory();
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert("Delete failed");
 
     }
 
   };
 
+
+  // =========================
+  // CLEAR ALL
+  // =========================
 
   const clearHistory = async () => {
 
@@ -71,26 +170,42 @@ export default function History() {
         "Delete all analysis history?"
       )
     ) {
+
       return;
+
     }
 
 
     try {
 
-      await fetch(
-        "http://127.0.0.1:8000/history",
-        {
-          method: "DELETE"
-        }
+      const response =
+        await fetch(
+          "http://127.0.0.1:8000/history",
+          {
+            method: "DELETE"
+          }
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "Clear history failed"
+        );
+
+      }
+
+
+      setHistory([]);
+
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert(
+        "Failed to clear history"
       );
-
-      loadHistory();
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert("Failed to clear history");
 
     }
 
@@ -104,7 +219,8 @@ export default function History() {
         maxWidth: "900px",
         margin: "auto",
         padding: "40px",
-        fontFamily: "Arial"
+        fontFamily:
+          "Arial, sans-serif"
       }}
     >
 
@@ -118,24 +234,75 @@ export default function History() {
       </p>
 
 
+      {/* LOADING */}
+
       {loading && (
 
-        <p>
-          Loading history...
-        </p>
+        <div
+          style={{
+            padding: "30px",
+            textAlign: "center"
+          }}
+        >
+
+          <h3>
+            Loading history...
+          </h3>
+
+        </div>
 
       )}
 
 
+      {/* ERROR */}
+
+      {!loading && error && (
+
+        <div
+          style={{
+            padding: "20px",
+            border:
+              "1px solid #ef4444",
+            borderRadius: "10px"
+          }}
+        >
+
+          <p>
+            {error}
+          </p>
+
+
+          <button
+            onClick={loadHistory}
+            style={{
+              padding:
+                "10px 16px",
+              cursor:
+                "pointer"
+            }}
+          >
+            Retry
+          </button>
+
+        </div>
+
+      )}
+
+
+      {/* EMPTY */}
+
       {!loading &&
+        !error &&
         history.length === 0 && (
 
           <div
             style={{
               padding: "30px",
-              border: "1px solid #ddd",
+              border:
+                "1px solid #ddd",
               borderRadius: "12px",
-              textAlign: "center"
+              textAlign:
+                "center"
             }}
           >
 
@@ -144,8 +311,8 @@ export default function History() {
             </h2>
 
             <p>
-              Complete a skill gap analysis
-              to see it here.
+              Complete a skill gap
+              analysis to see it here.
             </p>
 
           </div>
@@ -153,7 +320,10 @@ export default function History() {
         )}
 
 
+      {/* HISTORY */}
+
       {!loading &&
+        !error &&
         history.length > 0 && (
 
           <>
@@ -161,9 +331,12 @@ export default function History() {
             <button
               onClick={clearHistory}
               style={{
-                padding: "10px 16px",
-                marginBottom: "20px",
-                cursor: "pointer"
+                padding:
+                  "10px 16px",
+                marginBottom:
+                  "20px",
+                cursor:
+                  "pointer"
               }}
             >
               🗑 Clear All History
@@ -177,17 +350,23 @@ export default function History() {
                 style={{
                   padding: "20px",
                   marginBottom: "15px",
-                  border: "1px solid #ddd",
-                  borderRadius: "12px"
+                  border:
+                    "1px solid #ddd",
+                  borderRadius:
+                    "12px",
+                  background:
+                    "#ffffff"
                 }}
               >
 
                 <div
                   style={{
-                    display: "flex",
+                    display:
+                      "flex",
                     justifyContent:
                       "space-between",
-                    alignItems: "center"
+                    alignItems:
+                      "center"
                   }}
                 >
 
@@ -198,12 +377,15 @@ export default function History() {
 
                   <button
                     onClick={() =>
-                      deleteItem(item.id)
+                      deleteItem(
+                        item.id
+                      )
                     }
                     style={{
                       padding:
                         "8px 12px",
-                      cursor: "pointer"
+                      cursor:
+                        "pointer"
                     }}
                   >
                     Delete
@@ -223,9 +405,12 @@ export default function History() {
                   style={{
                     width: "100%",
                     height: "12px",
-                    background: "#e5e7eb",
-                    borderRadius: "10px",
-                    overflow: "hidden"
+                    background:
+                      "#e5e7eb",
+                    borderRadius:
+                      "10px",
+                    overflow:
+                      "hidden"
                   }}
                 >
 
@@ -234,7 +419,8 @@ export default function History() {
                       width:
                         `${item.match_percentage}%`,
                       height: "100%",
-                      background: "#2563eb"
+                      background:
+                        "#2563eb"
                     }}
                   />
 
@@ -267,38 +453,34 @@ export default function History() {
 
                 {item.matched?.length > 0 && (
 
-                  <div>
+                  <p>
 
                     <b>
                       Matched:
-                    </b>
+                    </b>{" "}
 
-                    <p>
-                      {item.matched.join(
-                        ", "
-                      )}
-                    </p>
+                    {item.matched.join(
+                      ", "
+                    )}
 
-                  </div>
+                  </p>
 
                 )}
 
 
                 {item.missing?.length > 0 && (
 
-                  <div>
+                  <p>
 
                     <b>
                       Missing:
-                    </b>
+                    </b>{" "}
 
-                    <p>
-                      {item.missing.join(
-                        ", "
-                      )}
-                    </p>
+                    {item.missing.join(
+                      ", "
+                    )}
 
-                  </div>
+                  </p>
 
                 )}
 

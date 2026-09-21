@@ -5,7 +5,7 @@ function History() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadHistory = () => {
 
     fetch("http://127.0.0.1:8000/history")
       .then(response => response.json())
@@ -17,7 +17,50 @@ function History() {
         setLoading(false);
       });
 
+  };
+
+  useEffect(() => {
+    loadHistory();
   }, []);
+
+
+  const deleteHistory = async (id) => {
+
+    const confirmDelete = window.confirm(
+      "Delete this analysis?"
+    );
+
+    if (!confirmDelete) return;
+
+    await fetch(
+      `http://127.0.0.1:8000/history/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    loadHistory();
+  };
+
+
+  const clearHistory = async () => {
+
+    const confirmDelete = window.confirm(
+      "Delete all analysis history?"
+    );
+
+    if (!confirmDelete) return;
+
+    await fetch(
+      "http://127.0.0.1:8000/history",
+      {
+        method: "DELETE"
+      }
+    );
+
+    loadHistory();
+  };
+
 
   return (
     <div
@@ -28,17 +71,55 @@ function History() {
       }}
     >
 
-      <h1>Analysis History</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "15px"
+        }}
+      >
 
-      <p>
-        View your previous skill gap analyses
-      </p>
+        <div>
+
+          <h1>
+            Analysis History
+          </h1>
+
+          <p>
+            View your previous skill gap analyses
+          </p>
+
+        </div>
+
+
+        {history.length > 0 && (
+
+          <button
+            onClick={clearHistory}
+            style={{
+              padding: "10px 16px",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer"
+            }}
+          >
+            Clear All History
+          </button>
+
+        )}
+
+      </div>
+
 
       {loading && (
         <p>Loading history...</p>
       )}
 
+
       {!loading && history.length === 0 && (
+
         <div
           style={{
             marginTop: "30px",
@@ -48,13 +129,19 @@ function History() {
             textAlign: "center"
           }}
         >
-          <h2>No Analysis History</h2>
+
+          <h2>
+            No Analysis History
+          </h2>
 
           <p>
             Analyze a job to create your first history record.
           </p>
+
         </div>
+
       )}
+
 
       {history.map(item => (
 
@@ -73,7 +160,8 @@ function History() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              flexWrap: "wrap"
+              flexWrap: "wrap",
+              gap: "15px"
             }}
           >
 
@@ -89,6 +177,7 @@ function History() {
 
             </div>
 
+
             <div
               style={{
                 fontSize: "28px",
@@ -100,9 +189,14 @@ function History() {
 
           </div>
 
+
           <hr />
 
-          <h3>Matched Skills</h3>
+
+          <h3>
+            Matched Skills
+          </h3>
+
 
           {item.matched.length > 0 ? (
 
@@ -128,12 +222,22 @@ function History() {
             </div>
 
           ) : (
-            <p>No matched skills</p>
+
+            <p>
+              No matched skills
+            </p>
+
           )}
 
-          <h3 style={{ marginTop: "20px" }}>
+
+          <h3
+            style={{
+              marginTop: "20px"
+            }}
+          >
             Missing Skills
           </h3>
+
 
           {item.missing.length > 0 ? (
 
@@ -159,8 +263,26 @@ function History() {
             </div>
 
           ) : (
-            <p>No missing skills</p>
+
+            <p>
+              No missing skills
+            </p>
+
           )}
+
+
+          <button
+            onClick={() => deleteHistory(item.id)}
+            style={{
+              marginTop: "20px",
+              padding: "10px 16px",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer"
+            }}
+          >
+            Delete
+          </button>
 
         </div>
 

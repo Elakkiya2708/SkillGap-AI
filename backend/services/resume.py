@@ -182,8 +182,7 @@ def extract_text(
 
     if filename.endswith(".docx"):
 
-        document =
-            Document(file)
+        document = Document(file)
 
 
         text = ""

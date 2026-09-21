@@ -120,9 +120,15 @@ const jobs = {
 
 
 export default function Analyze() {
-  const [resumeFilename, setResumeFilename] = useState("");
-  const [searchSkill, setSearchSkill] = useState("");
-  const [completedSkills, setCompletedSkills] = useState([]);
+
+  const [resumeFilename, setResumeFilename] =
+    useState("");
+
+  const [searchSkill, setSearchSkill] =
+    useState("");
+
+  const [completedSkills, setCompletedSkills] =
+    useState([]);
 
   const [userSkills, setUserSkills] =
     useState("");
@@ -190,7 +196,10 @@ export default function Analyze() {
 
       const data =
         await uploadResume(file);
-        setResumeFilename(data.filename);
+
+      setResumeFilename(
+        data.filename
+      );
 
 
       setDetectedSkills(
@@ -240,7 +249,6 @@ export default function Analyze() {
           await fetch(
             "http://127.0.0.1:8000/analyze-job",
             {
-
               method: "POST",
 
               headers: {
@@ -285,59 +293,32 @@ export default function Analyze() {
 
   const analyze = async () => {
 
-  const user = userSkills
-    .split(",")
-    .map(skill => skill.trim())
-    .filter(Boolean);
+    const user =
+      userSkills
+        .split(",")
+        .map(skill => skill.trim())
+        .filter(Boolean);
 
-  const finalUserSkills =
-    user.length > 0
-      ? user
-      : detectedSkills;
 
-  const required =
-    requiredSkills.length > 0
-      ? requiredSkills
-      : jobs[job];
+    const finalUserSkills =
+      user.length > 0
+        ? user
+        : detectedSkills;
 
-  if (finalUserSkills.length === 0) {
-    alert("Please upload a resume or enter your skills");
-    return;
-  }
 
-  try {
+    const required =
+      requiredSkills.length > 0
+        ? requiredSkills
+        : jobs[job];
 
-    const data = await analyzeSkills(
-      finalUserSkills,
-      required
-    );
 
-    setResult(data);
+    if (finalUserSkills.length === 0) {
 
-    await fetch(
-      "http://127.0.0.1:8000/save-analysis",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          job: job,
-          match_percentage: data.match_percentage,
-          matched: data.matched,
-          missing: data.missing
-        })
-      }
-    );
+      alert(
+        "Please upload a resume or enter your skills"
+      );
 
-  } catch (error) {
-
-    console.error(error);
-
-    alert("Analysis failed");
-
-  }
-};
+      return;
     }
 
 
@@ -345,27 +326,37 @@ export default function Analyze() {
 
       const data =
         await analyzeSkills(
-          user,
+          finalUserSkills,
           required
         );
 
 
       setResult(data);
+
+
+      // SAVE ANALYSIS HISTORY
+
       await fetch(
-  "http://127.0.0.1:8000/save-analysis",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      job: job,
-      match_percentage: data.match_percentage,
-      matched: data.matched,
-      missing: data.missing
-    })
-  }
-);
+        "http://127.0.0.1:8000/save-analysis",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            job: job,
+            match_percentage:
+              data.match_percentage,
+            matched:
+              data.matched,
+            missing:
+              data.missing
+          })
+        }
+      );
 
 
     } catch (error) {
@@ -642,138 +633,194 @@ export default function Analyze() {
 
         <div>
 
+          {/* SKILL MATCH */}
+
           <div
-  style={{
-    marginTop: "25px",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "12px"
-  }}
->
-  <h2>
-    Skill Match: {result.match_percentage}%
-  </h2>
+            style={{
+              marginTop: "25px",
+              padding: "20px",
+              border: "1px solid #ddd",
+              borderRadius: "12px"
+            }}
+          >
 
-  <div
-    style={{
-      width: "100%",
-      height: "20px",
-      background: "#e5e7eb",
-      borderRadius: "10px",
-      overflow: "hidden"
-    }}
-  >
-    <div
-      style={{
-        width: `${result.match_percentage}%`,
-        height: "100%",
-        background: "#2563eb",
-        borderRadius: "10px"
-      }}
-    />
-  </div>
+            <h2>
+              Skill Match:
+              {" "}
+              {result.match_percentage}%
+            </h2>
 
-  <p>
-    You match {result.match_percentage}% of the
-    required skills for this role.
-  </p>
-</div>
 
-<div
-  style={{
-    marginTop: "20px",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "12px"
-  }}
->
-  <h2>Career Readiness</h2>
+            <div
+              style={{
+                width: "100%",
+                height: "20px",
+                background: "#e5e7eb",
+                borderRadius: "10px",
+                overflow: "hidden"
+              }}
+            >
 
-  <h1>
-    {result.match_percentage}%
-  </h1>
+              <div
+                style={{
+                  width:
+                    `${result.match_percentage}%`,
+                  height: "100%",
+                  background: "#2563eb",
+                  borderRadius: "10px"
+                }}
+              />
 
-  <div
-  style={{
-    width: "100%",
-    height: "14px",
-    background: "#e5e7eb",
-    borderRadius: "10px",
-    overflow: "hidden",
-    marginTop: "15px"
-  }}
->
-  <div
-    style={{
-      width: `${result.match_percentage}%`,
-      height: "100%",
-      background: "#2563eb",
-      borderRadius: "10px"
-    }}
-  />
-</div>
+            </div>
 
-  <p>
-    Your current skills match {result.match_percentage}% of the
-    required skills for this role.
-  </p>
-</div>
 
-          {/* SUMMARY */}
+            <p>
+              You match{" "}
+              {result.match_percentage}%
+              {" "}of the required skills
+              for this role.
+            </p>
+
+          </div>
+
+
+          {/* CAREER READINESS */}
 
           <div
             style={{
               marginTop: "20px",
               padding: "20px",
-              border:
-                "1px solid #ddd",
+              border: "1px solid #ddd",
               borderRadius: "12px"
             }}
           >
+
+            <h2>
+              Career Readiness
+            </h2>
+
+
+            <h1>
+              {result.match_percentage}%
+            </h1>
+
+
             <div
-  style={{
-    marginTop: "20px",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "12px"
-  }}
->
-  <h2>Skill Priority Summary</h2>
+              style={{
+                width: "100%",
+                height: "14px",
+                background: "#e5e7eb",
+                borderRadius: "10px",
+                overflow: "hidden",
+                marginTop: "15px"
+              }}
+            >
 
-  <div
-    style={{
-      display: "flex",
-      gap: "15px",
-      flexWrap: "wrap"
-    }}
-  >
-    {["Critical", "High", "Medium", "Low"].map(priority => (
-      <div
-        key={priority}
-        style={{
-          flex: 1,
-          minWidth: "120px",
-          padding: "15px",
-          border: "1px solid #ddd",
-          borderRadius: "10px",
-          textAlign: "center"
-        }}
-      >
-        <h3>{priority}</h3>
+              <div
+                style={{
+                  width:
+                    `${result.match_percentage}%`,
+                  height: "100%",
+                  background: "#2563eb",
+                  borderRadius: "10px"
+                }}
+              />
 
-        <h2>
-          {
-            result.roadmap.filter(
-              item => item.priority === priority
-            ).length
-          }
-        </h2>
+            </div>
 
-        <p>Missing skills</p>
-      </div>
-    ))}
-  </div>
-</div>
+
+            <p>
+              Your current skills match{" "}
+              {result.match_percentage}%
+              {" "}of the required skills
+              for this role.
+            </p>
+
+          </div>
+
+
+          {/* SKILL PRIORITY SUMMARY */}
+
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "20px",
+              border: "1px solid #ddd",
+              borderRadius: "12px"
+            }}
+          >
+
+            <h2>
+              Skill Priority Summary
+            </h2>
+
+
+            <div
+              style={{
+                display: "flex",
+                gap: "15px",
+                flexWrap: "wrap"
+              }}
+            >
+
+              {[
+                "Critical",
+                "High",
+                "Medium",
+                "Low"
+              ].map(priority => (
+
+                <div
+                  key={priority}
+                  style={{
+                    flex: 1,
+                    minWidth: "120px",
+                    padding: "15px",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    textAlign: "center"
+                  }}
+                >
+
+                  <h3>
+                    {priority}
+                  </h3>
+
+
+                  <h2>
+                    {
+                      result.roadmap.filter(
+                        item =>
+                          item.priority ===
+                          priority
+                      ).length
+                    }
+                  </h2>
+
+
+                  <p>
+                    Missing skills
+                  </p>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          </div>
+
+
+          {/* SKILL GAP SUMMARY */}
+
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "20px",
+              border: "1px solid #ddd",
+              borderRadius: "12px"
+            }}
+          >
 
             <h3>
               Skill Gap Summary
@@ -817,7 +864,7 @@ export default function Analyze() {
           </div>
 
 
-          {/* MATCHED */}
+          {/* MATCHED SKILLS */}
 
           <h3>
             Matched Skills
@@ -833,193 +880,241 @@ export default function Analyze() {
 
             )
           )}
-          
 
 
-          {/* MISSING */}
+          {/* MISSING SKILLS */}
 
           <h3>
             Missing Skills
           </h3>
+
+
           <input
-  type="text"
-  placeholder="Search missing skills..."
-  value={searchSkill}
-  onChange={e => setSearchSkill(e.target.value)}
-  style={{
-    width: "100%",
-    padding: "12px",
-    marginTop: "10px",
-    marginBottom: "15px",
-    border: "1px solid #ccc",
-    borderRadius: "8px"
-  }}
-/>
+            type="text"
+            placeholder="Search missing skills..."
+            value={searchSkill}
+            onChange={
+              e =>
+                setSearchSkill(
+                  e.target.value
+                )
+            }
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "10px",
+              marginBottom: "15px",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              boxSizing: "border-box"
+            }}
+          />
 
 
           {result.roadmap
-  .filter(item =>
-    item.skill
-      .toLowerCase()
-      .includes(searchSkill.toLowerCase())
-  )
-  .map(item => (
-  <div
-    key={item.skill}
-    style={{
-      padding: "15px",
-      marginTop: "10px",
-      border: "1px solid #ddd",
-      borderRadius: "10px"
-    }}
-  >
-    <strong>{item.skill}</strong>
+            .filter(
+              item =>
+                item.skill
+                  .toLowerCase()
+                  .includes(
+                    searchSkill.toLowerCase()
+                  )
+            )
+            .map(item => (
 
-    <p>
-      Priority: <b>{item.priority}</b>
-    </p>
+              <div
+                key={item.skill}
+                style={{
+                  padding: "15px",
+                  marginTop: "10px",
+                  border: "1px solid #ddd",
+                  borderRadius: "10px"
+                }}
+              >
 
-    <p>
-      Next Step: Learn {item.skill} basics
-    </p>
-  </div>
-))}
+                <strong>
+                  {item.skill}
+                </strong>
+
+
+                <p>
+                  Priority:
+                  {" "}
+                  <b>
+                    {item.priority}
+                  </b>
+                </p>
+
+
+                <p>
+                  Next Step:
+                  {" "}
+                  Learn {item.skill} basics
+                </p>
+
+              </div>
+
+            ))}
+
+
+          {/* SUMMARY CARDS */}
 
           <div
-  style={{
-    display: "flex",
-    gap: "20px",
-    marginTop: "20px",
-    flexWrap: "wrap"
-  }}
->
-  <div
-    style={{
-      flex: 1,
-      minWidth: "200px",
-      padding: "20px",
-      border: "1px solid #ddd",
-      borderRadius: "12px"
-    }}
-  >
-    <h3>Matched Skills</h3>
+            style={{
+              display: "flex",
+              gap: "20px",
+              marginTop: "20px",
+              flexWrap: "wrap"
+            }}
+          >
 
-    <h2>
-      {result.matched.length}
-    </h2>
+            <div
+              style={{
+                flex: 1,
+                minWidth: "180px",
+                padding: "20px",
+                border: "1px solid #ddd",
+                borderRadius: "12px",
+                textAlign: "center"
+              }}
+            >
 
-    <p>
-      Skills you already have
-    </p>
-  </div>
+              <h3>
+                Matched Skills
+              </h3>
 
-  <div
-    style={{
-      flex: 1,
-      minWidth: "200px",
-      padding: "20px",
-      border: "1px solid #ddd",
-      borderRadius: "12px"
-    }}
-  >
-    <h3>Missing Skills</h3>
+              <h1>
+                {result.matched.length}
+              </h1>
 
-    <h2>
-      {result.missing.length}
-    </h2>
+              <p>
+                Skills you already have
+              </p>
 
-    <p>
-      Skills you need to learn
-    </p>
-  </div>
-</div>
+            </div>
 
-<div
-  style={{
-    marginTop: "20px",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "12px"
-  }}
->
-  <h2>Recommended Skills for {job}</h2>
 
-  {result.missing.slice(0, 3).map(skill => (
-    <div
-      key={skill}
-      style={{
-        padding: "10px 0",
-        borderBottom: "1px solid #eee"
-      }}
-    >
-      <strong>{skill}</strong>
-      <p style={{ margin: "5px 0" }}>
-        Learn this skill to improve your readiness for this role.
-      </p>
-    </div>
-  ))}
-</div>
+            <div
+              style={{
+                flex: 1,
+                minWidth: "180px",
+                padding: "20px",
+                border: "1px solid #ddd",
+                borderRadius: "12px",
+                textAlign: "center"
+              }}
+            >
 
-<div
-  style={{
-    display: "flex",
-    gap: "20px",
-    marginTop: "20px",
-    flexWrap: "wrap"
-  }}
->
-  <div
-    style={{
-      flex: 1,
-      minWidth: "180px",
-      padding: "20px",
-      border: "1px solid #ddd",
-      borderRadius: "12px",
-      textAlign: "center"
-    }}
-  >
-    <h3>Matched Skills</h3>
-    <h1>{result.matched.length}</h1>
-    <p>Skills you already have</p>
-  </div>
+              <h3>
+                Missing Skills
+              </h3>
 
-  <div
-    style={{
-      flex: 1,
-      minWidth: "180px",
-      padding: "20px",
-      border: "1px solid #ddd",
-      borderRadius: "12px",
-      textAlign: "center"
-    }}
-  >
-    <h3>Missing Skills</h3>
-    <h1>{result.missing.length}</h1>
-    <p>Skills to improve</p>
-  </div>
+              <h1>
+                {result.missing.length}
+              </h1>
 
-  <div
-    style={{
-      flex: 1,
-      minWidth: "180px",
-      padding: "20px",
-      border: "1px solid #ddd",
-      borderRadius: "12px",
-      textAlign: "center"
-    }}
-  >
-    <h3>Readiness</h3>
-    <h1>{result.match_percentage}%</h1>
-    <p style={{ fontWeight: "bold" }}>
-  {result.match_percentage >= 80
-    ? "🎯 Strong career readiness"
-    : result.match_percentage >= 60
-    ? "📈 Good progress — improve missing skills"
-    : "🚀 Focus on the missing skills to improve readiness"}
-</p>
-    <p>Current skill readiness</p>
-  </div>
-</div>
+              <p>
+                Skills to improve
+              </p>
+
+            </div>
+
+
+            <div
+              style={{
+                flex: 1,
+                minWidth: "180px",
+                padding: "20px",
+                border: "1px solid #ddd",
+                borderRadius: "12px",
+                textAlign: "center"
+              }}
+            >
+
+              <h3>
+                Readiness
+              </h3>
+
+
+              <h1>
+                {result.match_percentage}%
+              </h1>
+
+
+              <p
+                style={{
+                  fontWeight: "bold"
+                }}
+              >
+
+                {result.match_percentage >= 80
+                  ? "🎯 Strong career readiness"
+                  : result.match_percentage >= 60
+                  ? "📈 Good progress — improve missing skills"
+                  : "🚀 Focus on the missing skills to improve readiness"}
+
+              </p>
+
+
+              <p>
+                Current skill readiness
+              </p>
+
+            </div>
+
+          </div>
+
+
+          {/* RECOMMENDED SKILLS */}
+
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "20px",
+              border: "1px solid #ddd",
+              borderRadius: "12px"
+            }}
+          >
+
+            <h2>
+              Recommended Skills for {job}
+            </h2>
+
+
+            {result.missing
+              .slice(0, 3)
+              .map(skill => (
+
+                <div
+                  key={skill}
+                  style={{
+                    padding: "10px 0",
+                    borderBottom:
+                      "1px solid #eee"
+                  }}
+                >
+
+                  <strong>
+                    {skill}
+                  </strong>
+
+
+                  <p
+                    style={{
+                      margin: "5px 0"
+                    }}
+                  >
+                    Learn this skill to
+                    improve your readiness
+                    for this role.
+                  </p>
+
+                </div>
+
+              ))}
+
+          </div>
+
 
           {/* =========================
               LEARNING ROADMAP
@@ -1028,64 +1123,93 @@ export default function Analyze() {
           <h2>
             Learning Roadmap
           </h2>
+
+
+          {/* LEARNING PROGRESS */}
+
           <div
-  style={{
-    marginTop: "20px",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "12px"
-  }}
->
-  <h2>Learning Progress</h2>
+            style={{
+              marginTop: "20px",
+              padding: "20px",
+              border: "1px solid #ddd",
+              borderRadius: "12px"
+            }}
+          >
 
-  <h1>
-    {result.roadmap.length > 0
-      ? Math.round(
-          (completedSkills.length /
-            result.roadmap.length) *
-            100
-        )
-      : 0}%
-  </h1>
-
-  <p>
-    {completedSkills.length} of{" "}
-    {result.roadmap.length} skills completed
-  </p>
-<p style={{ fontWeight: "bold" }}>
-  {completedSkills.length === 0
-    ? "Start learning your missing skills"
-    : completedSkills.length === result.roadmap.length
-    ? "🎉 All skills completed!"
-    : "🚀 Keep learning and improve your skills"}
-</p>
-  <div
-    style={{
-      width: "100%",
-      height: "14px",
-      background: "#e5e7eb",
-      borderRadius: "10px",
-      overflow: "hidden"
-    }}
-  >
-    <div
-      style={{
-        width: `${
-          result.roadmap.length > 0
-            ? (completedSkills.length /
-                result.roadmap.length) *
-              100
-            : 0
-        }%`,
-        height: "100%",
-        background: "#2563eb",
-        borderRadius: "10px"
-      }}
-    />
-  </div>
-</div>
+            <h2>
+              Learning Progress
+            </h2>
 
 
+            <h1>
+              {result.roadmap.length > 0
+                ? Math.round(
+                    (
+                      completedSkills.length /
+                      result.roadmap.length
+                    ) * 100
+                  )
+                : 0}%
+            </h1>
+
+
+            <p>
+              {completedSkills.length}
+              {" "}of{" "}
+              {result.roadmap.length}
+              {" "}skills completed
+            </p>
+
+
+            <p
+              style={{
+                fontWeight: "bold"
+              }}
+            >
+
+              {completedSkills.length === 0
+                ? "Start learning your missing skills"
+                : completedSkills.length ===
+                  result.roadmap.length
+                ? "🎉 All skills completed!"
+                : "🚀 Keep learning and improve your skills"}
+
+            </p>
+
+
+            <div
+              style={{
+                width: "100%",
+                height: "14px",
+                background: "#e5e7eb",
+                borderRadius: "10px",
+                overflow: "hidden"
+              }}
+            >
+
+              <div
+                style={{
+                  width:
+                    `${
+                      result.roadmap.length > 0
+                        ? (
+                            completedSkills.length /
+                            result.roadmap.length
+                          ) * 100
+                        : 0
+                    }%`,
+                  height: "100%",
+                  background: "#2563eb",
+                  borderRadius: "10px"
+                }}
+              />
+
+            </div>
+
+          </div>
+
+
+          {/* ROADMAP CARDS */}
 
           {result.roadmap.map(
             item => (
@@ -1113,29 +1237,40 @@ export default function Analyze() {
 
 
                 <p>
-  Priority:{" "}
-  <span
-    style={{
-      fontWeight: "bold",
-      padding: "5px 10px",
-      borderRadius: "15px",
-      border: "1px solid #ccc"
-    }}
-  >
-    {item.priority}
-  </span>
-</p>
 
-<p>
-  {item.priority === "Critical" &&
-    "🔥 Learn this skill first"}
-  {item.priority === "High" &&
-    "⚡ Important skill for this role"}
-  {item.priority === "Medium" &&
-    "📌 Recommended to improve your profile"}
-  {item.priority === "Low" &&
-    "💡 Useful additional skill"}
-</p>
+                  Priority:
+                  {" "}
+
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      padding: "5px 10px",
+                      borderRadius: "15px",
+                      border: "1px solid #ccc"
+                    }}
+                  >
+                    {item.priority}
+                  </span>
+
+                </p>
+
+
+                <p>
+
+                  {item.priority === "Critical" &&
+                    "🔥 Learn this skill first"}
+
+                  {item.priority === "High" &&
+                    "⚡ Important skill for this role"}
+
+                  {item.priority === "Medium" &&
+                    "📌 Recommended to improve your profile"}
+
+                  {item.priority === "Low" &&
+                    "💡 Useful additional skill"}
+
+                </p>
+
 
                 <h4>
                   Learning Steps
@@ -1197,125 +1332,217 @@ export default function Analyze() {
 
                   )}
 
+
+                {/* COMPLETED */}
+
+                <label
+                  style={{
+                    display: "block",
+                    marginTop: "10px"
+                  }}
+                >
+
+                  <input
+                    type="checkbox"
+                    checked={
+                      completedSkills.includes(
+                        item.skill
+                      )
+                    }
+                    onChange={() => {
+
+                      setCompletedSkills(
+                        prev =>
+                          prev.includes(
+                            item.skill
+                          )
+                            ? prev.filter(
+                                skill =>
+                                  skill !==
+                                  item.skill
+                              )
+                            : [
+                                ...prev,
+                                item.skill
+                              ]
+                      );
+
+                    }}
+                  />
+
+                  {" "}Completed
+
+                </label>
+
               </div>
 
             )
           )}
+
+
+          {/* PDF REPORT */}
+
           <button
-  onClick={async () => {
-    const response = await fetch(
-      "http://127.0.0.1:8000/download-report",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          job: job,
-          resume_filename: resumeFilename,
-          match_percentage: result.match_percentage,
-          matched: result.matched,
-          missing: result.missing,
-  roadmap: result.roadmap
-        })
-      }
-    );
+            onClick={async () => {
 
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
+              const response =
+                await fetch(
+                  "http://127.0.0.1:8000/download-report",
+                  {
+                    method: "POST",
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "SkillGap_Report.pdf";
-    a.click();
+                    headers: {
+                      "Content-Type":
+                        "application/json"
+                    },
 
-    window.URL.revokeObjectURL(url);
-  }}
-  style={{
-    marginTop: "20px",
-    padding: "12px 20px",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer"
-  }}
->
-  📄 Download Skill Gap Report
-</button>
+                    body: JSON.stringify({
+                      job: job,
+                      resume_filename:
+                        resumeFilename,
+                      match_percentage:
+                        result.match_percentage,
+                      matched:
+                        result.matched,
+                      missing:
+                        result.missing,
+                      roadmap:
+                        result.roadmap
+                    })
+                  }
+                );
+
+
+              const blob =
+                await response.blob();
+
+
+              const url =
+                window.URL.createObjectURL(
+                  blob
+                );
+
+
+              const a =
+                document.createElement(
+                  "a"
+                );
+
+
+              a.href = url;
+
+              a.download =
+                "SkillGap_Report.pdf";
+
+              a.click();
+
+
+              window.URL.revokeObjectURL(
+                url
+              );
+
+            }}
+            style={{
+              marginTop: "20px",
+              padding: "12px 20px",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer"
+            }}
+          >
+            📄 Download Skill Gap Report
+          </button>
 
 
           {/* =========================
-    SKILL DEPENDENCY GRAPH
-========================= */}
+              SKILL DEPENDENCY GRAPH
+          ========================= */}
 
-<h2>
-  Skill Dependency Graph
-</h2>
+          <h2>
+            Skill Dependency Graph
+          </h2>
 
-<div
-  style={{
-    marginTop: "20px",
-    padding: "25px",
-    border: "1px solid #ddd",
-    borderRadius: "12px"
-  }}
->
-  {result.roadmap.map(item => (
-    <div
-      key={item.skill}
-      style={{
-        marginTop: "20px",
-        padding: "15px",
-        border: "1px solid #ccc",
-        borderRadius: "10px"
-      }}
-    >
-      <strong>{item.skill}</strong>
 
-      <label
-  style={{
-    display: "block",
-    marginTop: "10px"
-  }}
->
-  <input
-    type="checkbox"
-    checked={completedSkills.includes(item.skill)}
-    onChange={() => {
-      setCompletedSkills(prev =>
-        prev.includes(item.skill)
-          ? prev.filter(skill => skill !== item.skill)
-          : [...prev, item.skill]
-      );
-    }}
-  />
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "25px",
+              border: "1px solid #ddd",
+              borderRadius: "12px"
+            }}
+          >
 
-  {" "}Completed
-</label>
+            {result.roadmap.map(
+              item => (
 
-      {item.dependencies &&
-      item.dependencies.length > 0 ? (
-        <div style={{ marginTop: "10px" }}>
-          {item.dependencies.map(dep => (
-            <span
-              key={dep}
-              style={{
-                display: "inline-block",
-                padding: "8px 12px",
-                margin: "5px",
-                border: "1px solid #2563eb",
-                borderRadius: "20px"
-              }}
-            >
-              → {dep}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p>No dependencies available</p>
-      )}
-    </div>
-  ))}
-</div>
+                <div
+                  key={item.skill}
+                  style={{
+                    marginTop: "20px",
+                    padding: "15px",
+                    border: "1px solid #ccc",
+                    borderRadius: "10px"
+                  }}
+                >
+
+                  <strong>
+                    {item.skill}
+                  </strong>
+
+
+                  {item.dependencies &&
+                  item.dependencies.length > 0 ? (
+
+                    <div
+                      style={{
+                        marginTop: "10px"
+                      }}
+                    >
+
+                      {item.dependencies.map(
+                        dep => (
+
+                          <span
+                            key={dep}
+                            style={{
+                              display:
+                                "inline-block",
+
+                              padding:
+                                "8px 12px",
+
+                              margin:
+                                "5px",
+
+                              border:
+                                "1px solid #2563eb",
+
+                              borderRadius:
+                                "20px"
+                            }}
+                          >
+                            → {dep}
+                          </span>
+
+                        )
+                      )}
+
+                    </div>
+
+                  ) : (
+
+                    <p>
+                      No dependencies available
+                    </p>
+
+                  )}
+
+                </div>
+
+              )
+            )}
+
+          </div>
 
         </div>
 

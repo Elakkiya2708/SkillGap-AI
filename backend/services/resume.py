@@ -141,8 +141,7 @@ def extract_text(
 
                 for page in reader.pages:
 
-                    page_text = page.extract_text()
-                        or ""
+                    page_text = page.extract_text() or ""
 
 
                     text += (

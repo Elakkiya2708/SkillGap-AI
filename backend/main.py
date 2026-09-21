@@ -49,30 +49,46 @@ def download_report(data: dict):
 
     pdf = canvas.Canvas(buffer)
 
+    # Title
     pdf.setFont("Helvetica-Bold", 18)
-    pdf.drawString(50, 800, "SkillGap AI - Career Skill Gap Report")
-
-    pdf.setFont("Helvetica", 12)
+    pdf.drawString(
+        50,
+        800,
+        "SkillGap AI - Career Skill Gap Report"
+    )
 
     y = 760
 
+    # Job
+    pdf.setFont("Helvetica", 12)
+
     pdf.drawString(
-        50, y,
+        50,
+        y,
         "Target Job: " + data.get("job", "N/A")
     )
 
     y -= 30
 
+    # Match percentage
     pdf.drawString(
-        50, y,
-        "Skill Match: " +
-        str(data.get("match_percentage", 0)) + "%"
+        50,
+        y,
+        "Skill Match: "
+        + str(data.get("match_percentage", 0))
+        + "%"
     )
 
     y -= 40
 
+    # Matched Skills
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(50, y, "Matched Skills")
+
+    pdf.drawString(
+        50,
+        y,
+        "Matched Skills"
+    )
 
     y -= 25
 
@@ -80,14 +96,24 @@ def download_report(data: dict):
 
     for skill in data.get("matched", []):
 
-        pdf.drawString(60, y, "✓ " + skill)
+        pdf.drawString(
+            60,
+            y,
+            "✓ " + skill
+        )
 
         y -= 20
 
     y -= 20
 
+    # Missing Skills
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(50, y, "Missing Skills")
+
+    pdf.drawString(
+        50,
+        y,
+        "Missing Skills"
+    )
 
     y -= 25
 
@@ -95,9 +121,53 @@ def download_report(data: dict):
 
     for skill in data.get("missing", []):
 
-        pdf.drawString(60, y, "✗ " + skill)
+        pdf.drawString(
+            60,
+            y,
+            "✗ " + skill
+        )
 
         y -= 20
+
+    y -= 20
+
+    # Learning Roadmap
+    pdf.setFont("Helvetica-Bold", 14)
+
+    pdf.drawString(
+        50,
+        y,
+        "Learning Roadmap"
+    )
+
+    y -= 25
+
+    pdf.setFont("Helvetica", 11)
+
+    for item in data.get("roadmap", []):
+
+        skill = item.get("skill", "")
+        priority = item.get("priority", "")
+
+        pdf.drawString(
+            60,
+            y,
+            skill + " - " + priority
+        )
+
+        y -= 20
+
+        # New page if space is low
+        if y < 50:
+
+            pdf.showPage()
+
+            pdf.setFont(
+                "Helvetica",
+                11
+            )
+
+            y = 800
 
     pdf.save()
 

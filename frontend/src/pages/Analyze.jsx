@@ -807,7 +807,13 @@ export default function Analyze() {
 />
 
 
-          {result.roadmap.map(item => (
+          {result.roadmap
+  .filter(item =>
+    item.skill
+      .toLowerCase()
+      .includes(searchSkill.toLowerCase())
+  )
+  .map(item => (
   <div
     key={item.skill}
     style={{

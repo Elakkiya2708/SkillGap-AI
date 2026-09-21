@@ -1117,6 +1117,27 @@ export default function Analyze() {
     >
       <strong>{item.skill}</strong>
 
+      <label
+  style={{
+    display: "block",
+    marginTop: "10px"
+  }}
+>
+  <input
+    type="checkbox"
+    checked={completedSkills.includes(item.skill)}
+    onChange={() => {
+      setCompletedSkills(prev =>
+        prev.includes(item.skill)
+          ? prev.filter(skill => skill !== item.skill)
+          : [...prev, item.skill]
+      );
+    }}
+  />
+
+  {" "}Completed
+</label>
+
       {item.dependencies &&
       item.dependencies.length > 0 ? (
         <div style={{ marginTop: "10px" }}>

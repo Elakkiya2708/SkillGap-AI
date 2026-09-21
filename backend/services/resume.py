@@ -129,8 +129,7 @@ def extract_text(
 
             try:
 
-                reader =
-                    PdfReader(
+                reader = PdfReader(
                         io.BytesIO(
                             pdf_bytes
                         )

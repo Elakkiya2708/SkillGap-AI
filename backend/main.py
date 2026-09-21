@@ -18,9 +18,10 @@ from services.dependency import get_dependencies
 from services.database import (
     init_db,
     save_analysis,
-    get_history
+    get_history,
+    delete_analysis,
+    clear_history
 )
-
 
 app = FastAPI()
 

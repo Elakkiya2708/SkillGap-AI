@@ -49,8 +49,12 @@ def download_report(data: dict):
 
     pdf = canvas.Canvas(buffer)
 
-    # Title
+    # =========================
+    # TITLE
+    # =========================
+
     pdf.setFont("Helvetica-Bold", 18)
+
     pdf.drawString(
         50,
         800,
@@ -59,7 +63,10 @@ def download_report(data: dict):
 
     y = 760
 
-    # Job
+    # =========================
+    # JOB
+    # =========================
+
     pdf.setFont("Helvetica", 12)
 
     pdf.drawString(
@@ -70,7 +77,10 @@ def download_report(data: dict):
 
     y -= 30
 
-    # Match percentage
+    # =========================
+    # MATCH
+    # =========================
+
     pdf.drawString(
         50,
         y,
@@ -81,7 +91,10 @@ def download_report(data: dict):
 
     y -= 40
 
-    # Matched Skills
+    # =========================
+    # MATCHED SKILLS
+    # =========================
+
     pdf.setFont("Helvetica-Bold", 14)
 
     pdf.drawString(
@@ -99,14 +112,17 @@ def download_report(data: dict):
         pdf.drawString(
             60,
             y,
-            "✓ " + skill
+            "- " + skill
         )
 
         y -= 20
 
     y -= 20
 
-    # Missing Skills
+    # =========================
+    # MISSING SKILLS
+    # =========================
+
     pdf.setFont("Helvetica-Bold", 14)
 
     pdf.drawString(
@@ -124,14 +140,17 @@ def download_report(data: dict):
         pdf.drawString(
             60,
             y,
-            "✗ " + skill
+            "- " + skill
         )
 
         y -= 20
 
     y -= 20
 
-    # Learning Roadmap
+    # =========================
+    # LEARNING ROADMAP
+    # =========================
+
     pdf.setFont("Helvetica-Bold", 14)
 
     pdf.drawString(
@@ -146,8 +165,8 @@ def download_report(data: dict):
 
     for item in data.get("roadmap", []):
 
-        skill = item.get("skill", "")
-        priority = item.get("priority", "")
+        skill = item.get("skill", "Unknown")
+        priority = item.get("priority", "Low")
 
         pdf.drawString(
             60,
@@ -157,8 +176,8 @@ def download_report(data: dict):
 
         y -= 20
 
-        # New page if space is low
-        if y < 50:
+        # Page break
+        if y < 60:
 
             pdf.showPage()
 
@@ -168,6 +187,63 @@ def download_report(data: dict):
             )
 
             y = 800
+
+    y -= 20
+
+    # =========================
+    # SKILL DEPENDENCIES
+    # =========================
+
+    pdf.setFont("Helvetica-Bold", 14)
+
+    pdf.drawString(
+        50,
+        y,
+        "Skill Dependencies"
+    )
+
+    y -= 25
+
+    pdf.setFont("Helvetica", 11)
+
+    for item in data.get("roadmap", []):
+
+        dependencies = item.get(
+            "dependencies",
+            []
+        )
+
+        if dependencies:
+
+            text = (
+                item.get("skill", "")
+                + " -> "
+                + ", ".join(dependencies)
+            )
+
+            pdf.drawString(
+                60,
+                y,
+                text[:100]
+            )
+
+            y -= 20
+
+            # Page break
+            if y < 60:
+
+                pdf.showPage()
+
+                pdf.setFont(
+                    "Helvetica",
+                    11
+                )
+
+                y = 800
+
+    # =========================
+    # SAVE PDF
+    # =========================
 
     pdf.save()
 

@@ -1166,7 +1166,8 @@ export default function Analyze() {
           job: job,
           match_percentage: result.match_percentage,
           matched: result.matched,
-          missing: result.missing
+          missing: result.missing,
+  roadmap: result.roadmap
         })
       }
     );

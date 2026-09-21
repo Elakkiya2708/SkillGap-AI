@@ -215,9 +215,7 @@ def analyze_job(data: dict):
     )
 
 
-    skills =
-        extract_required_skills(text)
-
+    skills = extract_required_skills(text)
 
     return {
 
